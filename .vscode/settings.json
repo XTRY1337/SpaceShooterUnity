@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "SpaceShooterGame.sln"
+    "dotnet.defaultSolution": "SpaceShooterUnity.sln"
 }
