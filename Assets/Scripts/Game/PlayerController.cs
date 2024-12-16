@@ -109,6 +109,9 @@ public class PlayerController : MonoBehaviour
                 {
                     if(_joystickFlag)
                     {
+                        mobileOffset.x = _movementAmount.x;
+                        mobileOffset.y = 0;
+                        mobileOffset.z= _movementAmount.y;
                         MovePlayer(VectorCreator.SetVector3(
                             x: _movementAmount.x,  
                             z: _movementAmount.y
@@ -124,6 +127,7 @@ public class PlayerController : MonoBehaviour
                 }
                 else if(t.phase == TouchPhase.Ended && leftTouch == t.fingerId)
                 {
+                    mobileOffset = Vector3.zero;
                     MovePlayer(Vector3.zero);
                     
                     leftTouch = 99;

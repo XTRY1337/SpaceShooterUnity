@@ -1,0 +1,8 @@
+C:/Users/Francisco/Desktop/My/GitProjects/SpaceShooterUnity/.utmp/RelWithDebInfo/5b1p4r1u/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/Francisco/Desktop/My/GitProjects/SpaceShooterUnity/.utmp/RelWithDebInfo/5b1p4r1u/arm64-v8a/CMakeFiles/rebuild_cache.dir
+C:/Users/Francisco/Desktop/My/GitProjects/SpaceShooterUnity/.utmp/RelWithDebInfo/5b1p4r1u/arm64-v8a/GameActivity/CMakeFiles/game.dir
+C:/Users/Francisco/Desktop/My/GitProjects/SpaceShooterUnity/.utmp/RelWithDebInfo/5b1p4r1u/arm64-v8a/GameActivity/CMakeFiles/edit_cache.dir
+C:/Users/Francisco/Desktop/My/GitProjects/SpaceShooterUnity/.utmp/RelWithDebInfo/5b1p4r1u/arm64-v8a/GameActivity/CMakeFiles/rebuild_cache.dir
+C:/Users/Francisco/Desktop/My/GitProjects/SpaceShooterUnity/.utmp/RelWithDebInfo/5b1p4r1u/arm64-v8a/FramePacing/CMakeFiles/swappywrapper.dir
+C:/Users/Francisco/Desktop/My/GitProjects/SpaceShooterUnity/.utmp/RelWithDebInfo/5b1p4r1u/arm64-v8a/FramePacing/CMakeFiles/edit_cache.dir
+C:/Users/Francisco/Desktop/My/GitProjects/SpaceShooterUnity/.utmp/RelWithDebInfo/5b1p4r1u/arm64-v8a/FramePacing/CMakeFiles/rebuild_cache.dir

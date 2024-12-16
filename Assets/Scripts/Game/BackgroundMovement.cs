@@ -21,7 +21,7 @@ public class BackgroundMovement : MonoBehaviour
     {
         switch (movementOption)
         {   
-            case 1: // = 0 move background during game to bottom
+            case 1: // = 1 move background during game to bottom
                 if(!GameController.gameOver)
                 {   
                     float playerHorizontalMovement = 0;
@@ -34,34 +34,61 @@ public class BackgroundMovement : MonoBehaviour
                     }
                     else if(Application.platform == RuntimePlatform.Android)
                     {
-                        playerHorizontalMovement = playerController.mobileOffset.x * 2f;
-                        playerVerticalMovement = playerController.mobileOffset.z * 2f;
+                        playerHorizontalMovement = playerController.mobileOffset.x;
+                        playerVerticalMovement = playerController.mobileOffset.z;
                     }
 
                     yOffset += Time.deltaTime * GameController.gameSpeed / 10f;
 
                     if(_backgroundRealistic) //extra moves
                     {
-                        if(playerHorizontalMovement > 0)
+                        if(Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
                         {
-                            //Ship to right, background to left
-                            xOffset += 0.0001f * GameController.gameSpeed;
-                        }
-                        else if(playerHorizontalMovement < 0)
-                        {
-                            //Ship to left, background to righ
-                            xOffset -= 0.0001f * GameController.gameSpeed;
-                        }
+                            if(playerHorizontalMovement > 0)
+                            {
+                                //Ship to right, background to left
+                                xOffset += 0.0001f * GameController.gameSpeed;
+                            }
+                            else if(playerHorizontalMovement < 0)
+                            {
+                                //Ship to left, background to righ
+                                xOffset -= 0.0001f * GameController.gameSpeed;
+                            }
 
-                        if(playerVerticalMovement > 0)
-                        {
-                            //Ship up, background down more speed
-                            yOffset += 0.00015f * GameController.gameSpeed;
+                            if(playerVerticalMovement > 0)
+                            {
+                                //Ship up, background down more speed
+                                yOffset += 0.00015f * GameController.gameSpeed;
+                            }
+                            else if(playerVerticalMovement < 0)
+                            {
+                                //Ship down, background down less speed
+                                yOffset -= 0.0001f * GameController.gameSpeed;
+                            }
                         }
-                        else if(playerVerticalMovement < 0)
+                        else if(Application.platform == RuntimePlatform.Android)
                         {
-                            //Ship down, background down less speed
-                            yOffset -= 0.0001f * GameController.gameSpeed;
+                            if(playerHorizontalMovement > 0)
+                            {
+                                //Ship to right, background to left
+                                xOffset += 0.0001f * GameController.gameSpeed * 3f;
+                            }
+                            else if(playerHorizontalMovement < 0)
+                            {
+                                //Ship to left, background to righ
+                                xOffset -= 0.0001f * GameController.gameSpeed * 3f;
+                            }
+
+                            if(playerVerticalMovement > 0)
+                            {
+                                //Ship up, background down more speed
+                                yOffset += 0.00015f * GameController.gameSpeed * 3f;
+                            }
+                            else if(playerVerticalMovement < 0)
+                            {
+                                //Ship down, background down less speed
+                                yOffset -= 0.0001f * GameController.gameSpeed * 3f;
+                            }
                         }
                     }
                 }
