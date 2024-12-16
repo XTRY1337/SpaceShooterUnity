@@ -2877,6 +2877,7 @@ MonoBehaviour:
   - {fileID: 149508866}
   - {fileID: 564765853}
   - {fileID: 1569129499}
+  playerController: {fileID: 93897638}
   hazard: {fileID: 8629296832766000323, guid: 74b2fa4275345f749ba67357f4064c0f, type: 3}
   restartButton: {fileID: 1480722389}
   menuButton: {fileID: 2082341645}

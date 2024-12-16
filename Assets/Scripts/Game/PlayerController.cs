@@ -36,6 +36,8 @@ public class PlayerController : MonoBehaviour
     private Finger _movementFinger;
     private Vector2 _movementAmount;
 
+    internal FloatingJoystickMy getJoystick => _joystick;
+
     void Start()
     {
         objectRenderer = GetComponent<Renderer>();
@@ -179,7 +181,7 @@ public class PlayerController : MonoBehaviour
 
     private void HandleFingerMove(Finger movedFinger)
     {
-        if(_joystickFlag)
+        if(_joystickFlag  && !GameController.gamePaused)
         {
             if(_movementFinger == movedFinger)
             {
@@ -214,21 +216,29 @@ public class PlayerController : MonoBehaviour
 
     private void HandleLoseFinger(Finger lostFinger)
     {
-        if(_joystickFlag)
+        if(_joystickFlag  && !GameController.gamePaused)
         {
             if(lostFinger == _movementFinger)
             {
-                _movementFinger = null;
-                _joystick.Knob.anchoredPosition = Vector2.zero;
-                _joystick.gameObject.SetActive(false);
-                _movementAmount = Vector2.zero;
+                ClearJoystick();
             }
         }
     }
 
-    private void HandleFingerDown(Finger touchedFinger)
+    internal void ClearJoystick()
     {
-        if(_joystickFlag)
+        _movementFinger = null;
+        _joystick.Knob.anchoredPosition = Vector2.zero;
+        _joystick.gameObject.SetActive(false);
+        _movementAmount = Vector2.zero;
+    }
+
+    private void HandleFingerDown(Finger touchedFinger)
+    {   
+        if (IsTouchOverUI(touchedFinger.index))
+            return;
+
+        if(_joystickFlag  && !GameController.gamePaused)
         {
             if(_movePlayerOption == 0)
             {
@@ -252,7 +262,6 @@ public class PlayerController : MonoBehaviour
                     _joystick.RectTransform.transform.position = ClampStartPosition(touchedFinger.screenPosition);
                 }
             }
-
         }
     }
 

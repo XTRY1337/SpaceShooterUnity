@@ -10,6 +10,7 @@ public class GameController : MonoBehaviour
 {
     [SerializeField] private List<Animation> _scoreAnimation = new(); 
 
+    public PlayerController playerController;
     public GameObject hazard;
     public GameObject restartButton;
     public GameObject menuButton;
@@ -135,6 +136,7 @@ public class GameController : MonoBehaviour
         restartButton.SetActive(true);
         menuButton.SetActive(true);
         pauseButton.gameObject.SetActive(false);
+        playerController.ClearJoystick();
 
         SessionManager.SetHighScore(_score);
     }
@@ -213,6 +215,7 @@ public class GameController : MonoBehaviour
         Time.timeScale = 0;
         gamePaused = true;
         panel.SetActive(true);
+        playerController.ClearJoystick();
         buttonImage.sprite = pauseStartImg[0];
         pauseButton.onClick.RemoveAllListeners();
         pauseButton.onClick.AddListener(OnPlayButton);
