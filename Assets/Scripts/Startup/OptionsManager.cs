@@ -18,6 +18,9 @@ public class OptionsManager : MonoBehaviour
     public TextMeshProUGUI speedText;
     public TextMeshProUGUI volumeText;
     public GameObject panel;
+    public GameObject panelNewKey;
+    public TextMeshProUGUI currentKey;
+    public TextMeshProUGUI waitingKey;
     public TMP_Dropdown dropdown; 
 
     public GameObject buttonGameSettings;
@@ -80,6 +83,8 @@ public class OptionsManager : MonoBehaviour
 
         sliderVolume.value = volume;
         volumeText.text = $"{volume}%";
+
+        currentKey.text = SessionManager.GetFireKey().ToString();
 
         toggles[SessionManager.GetSkin()].isOn = true;
 
@@ -163,6 +168,7 @@ public class OptionsManager : MonoBehaviour
         limitLineToggle.isOn = false;
         dropdown.value = 0;
         joystick.isOn = false;
+        currentKey.text = KeyCode.Mouse0.ToString();
         
         speedText.text = $"{Constants.DefaulGameSpeed}x";
         sliderGameSpeed.value = Constants.DefaulGameSpeed;
@@ -178,6 +184,7 @@ public class OptionsManager : MonoBehaviour
         SessionManager.SetDefaultLimitLine();
         SessionManager.SetDefaultPlayerMovementControlOption();
         SessionManager.SetDefaultJoystick();
+        SessionManager.SetDefaultFireKey();
 
         panel.SetActive(false);
     }
@@ -199,6 +206,7 @@ public class OptionsManager : MonoBehaviour
 
     public void OnBackMenuButton()
     {
+        panelNewKey.SetActive(false);
         SceneManager.LoadScene(2);
     }
 
@@ -226,6 +234,7 @@ public class OptionsManager : MonoBehaviour
         panelGameSettings.SetActive(true);
         panelShipSettings.SetActive(false);
         panelControlsSettings.SetActive(false);
+        panelNewKey.SetActive(false);
 
         if(Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
         {   
@@ -261,6 +270,7 @@ public class OptionsManager : MonoBehaviour
         panelGameSettings.SetActive(false);
         panelShipSettings.SetActive(true);
         panelControlsSettings.SetActive(false);
+        panelNewKey.SetActive(false);
 
         if(Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
         {   
@@ -305,6 +315,7 @@ public class OptionsManager : MonoBehaviour
         panelGameSettings.SetActive(false);
         panelShipSettings.SetActive(false);
         panelControlsSettings.SetActive(true);
+        panelNewKey.SetActive(false);
     }
 
     private void OnDropdownValueChanged(int value)
@@ -317,6 +328,46 @@ public class OptionsManager : MonoBehaviour
             case 1:
                 SessionManager.SetPlayerMovementControlOption(1);
                 break;
+        }
+    }
+
+    public void OnNewKeyButton()
+    {   
+        panelNewKey.SetActive(true);
+        waitingKey.text = "Waiting Key...";
+
+        StartCoroutine(WaitingNewKey());
+    }
+
+    System.Collections.IEnumerator WaitingNewKey()
+    {
+        while (true)
+        {
+            Debug.Log(IntroGame.invalidKeys);
+
+            foreach (KeyCode key in System.Enum.GetValues(typeof(KeyCode)))
+            {   
+                if (Input.GetKeyDown(key))
+                {
+                    if (IntroGame.invalidKeys.Contains(key))
+                    {
+                        Debug.Log("Tecla inválida pressionada: " + key);
+                        waitingKey.color = new Color(a:1, r:255, g:0, b:0);
+                        waitingKey.text = "Invalid Key: " + key;
+                        yield return new WaitForSeconds(1f);
+                        waitingKey.color = new Color(a:1, r:255, g:255, b:255);
+                        waitingKey.text = "Waiting Key...";
+                        continue;
+                    }
+
+                    currentKey.text = key.ToString();
+                    SessionManager.SetFireKey(key);
+                    panelNewKey.SetActive(false);
+                    yield break;
+                }
+            }
+
+            yield return null;
         }
     }
 }

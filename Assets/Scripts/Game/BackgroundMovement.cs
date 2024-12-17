@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class BackgroundMovement : MonoBehaviour
 {
@@ -94,14 +95,17 @@ public class BackgroundMovement : MonoBehaviour
                 }
                 break;
             default: // = 0 move the map with mouse
-                Vector3 mousePosition = Input.mousePosition;
+                if (!EventSystem.current.IsPointerOverGameObject())
+                {
+                    Vector3 mousePosition = Input.mousePosition;
 
-                float xNormalized = mousePosition.x / Screen.width;
-                float yNormalized = mousePosition.y / Screen.height;
+                    float xNormalized = mousePosition.x / Screen.width;
+                    float yNormalized = mousePosition.y / Screen.height;
 
-                xOffset = xNormalized * parallaxSpeed;
-                yOffset = yNormalized * parallaxSpeed;
-
+                    xOffset = xNormalized * parallaxSpeed;
+                    yOffset = yNormalized * parallaxSpeed;
+                }
+                
                 break;
         }
 

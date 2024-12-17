@@ -14,8 +14,8 @@ public class SessionManager : MonoBehaviour
 
         if (!File.Exists(_sessionFilePath))
         {
-            Debug.Log("Aqui");
             NewDefaulSession();
+            SetDefaultFireKey();
         }
     }
 
@@ -289,6 +289,33 @@ public class SessionManager : MonoBehaviour
     }
     #endregion
 
+    #region FireKey
+    public static KeyCode GetFireKey()
+    {
+        var jsonObject = DeserializeObject();
+        return jsonObject.fireKey;
+    }
+
+    public static void SetFireKey(KeyCode fireKey)
+    {
+        var jsonObject = DeserializeObject();
+
+        if(fireKey != jsonObject.fireKey)
+        {
+            jsonObject.fireKey = fireKey;
+
+            SerializeObject(jsonObject);
+        }
+    }
+    
+    public static void SetDefaultFireKey()
+    {
+        var jsonObject = DeserializeObject();
+        jsonObject.fireKey = KeyCode.Mouse0;
+        SerializeObject(jsonObject);
+    }
+    #endregion
+
     [System.Serializable]
     private class SpaceShooterData
     {
@@ -301,5 +328,6 @@ public class SessionManager : MonoBehaviour
         public bool limitLine;
         public int playerMovementOption;
         public bool joystick;
+        public KeyCode fireKey;
     }
 }

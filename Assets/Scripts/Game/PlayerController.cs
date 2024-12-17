@@ -38,6 +38,8 @@ public class PlayerController : MonoBehaviour
 
     internal FloatingJoystickMy getJoystick => _joystick;
 
+    private KeyCode _fireKey;
+
     void Start()
     {
         objectRenderer = GetComponent<Renderer>();
@@ -51,6 +53,7 @@ public class PlayerController : MonoBehaviour
 
         _movePlayerOption = SessionManager.GetPlayerMovementControlOption();
         _joystickFlag = SessionManager.GetJoystick();
+        _fireKey = SessionManager.GetFireKey();
     }
 
     void Update()
@@ -60,7 +63,7 @@ public class PlayerController : MonoBehaviour
         {   
             MovePlayer(VectorCreator.SetVector3(x: getHorizontalMove, z: getVerticalMove));
 
-            if (Input.GetButton("Fire1") && 
+            if (Input.GetKey(_fireKey) && 
                 !EventSystem.current.IsPointerOverGameObject() &&
                 !GameController.gamePaused)
             {
