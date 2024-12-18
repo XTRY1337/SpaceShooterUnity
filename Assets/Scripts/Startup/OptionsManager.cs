@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 using TMPro;
+using UnityEngine.EventSystems;
 
 public class OptionsManager : MonoBehaviour
 {
@@ -46,6 +47,8 @@ public class OptionsManager : MonoBehaviour
     private static Color _selectedColor;
     private static Color _normalColor;
     private static int _currentTab;
+
+    public List<Image> skinImages;
 
     public void Start()
     {
@@ -98,6 +101,12 @@ public class OptionsManager : MonoBehaviour
                     SessionManager.SetSkin(index);
                 }
             });
+
+            EventTrigger trigger = skinImages[i].gameObject.AddComponent<EventTrigger>();
+            EventTrigger.Entry entry = new EventTrigger.Entry();
+            entry.eventID = EventTriggerType.PointerClick;
+            entry.callback.AddListener((eventData) => OnSkinImageClick(index));
+            trigger.triggers.Add(entry);
         }
 
         sliderVolume.onValueChanged.AddListener(val =>
@@ -142,6 +151,15 @@ public class OptionsManager : MonoBehaviour
         {
             panelControlsSettingsAndroid.SetActive(false);
         }
+    }
+
+    void OnSkinImageClick(int index)
+    {
+        for (int j = 0; j < toggles.Count; j++)
+        {
+            toggles[j].isOn = false;
+        }
+        toggles[index].isOn = true;
     }
 
     public void OnGameSpeedSliderValueChange()
