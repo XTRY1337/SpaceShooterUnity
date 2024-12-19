@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 public class TutorialController : MonoBehaviour
@@ -52,10 +51,11 @@ public class TutorialController : MonoBehaviour
 
         //after 1.5 second
         Time.timeScale = 0;
-        _moveKeysAnimator.SetActive(true);
 
         if(Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
-        {
+        {   
+            _moveKeysAnimator.SetActive(true);
+
             //While key press
             bool click = false;
             while(!click)
