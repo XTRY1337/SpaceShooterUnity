@@ -6,12 +6,14 @@ public class MenuManager : MonoBehaviour
     private void Start()
     {
         BackgroundMovement.movementOption = 0;
+        AudioManager.instance.ChangeMusic(0);
     }
 
     public void OnPlayButton()
     {
         AudioManager.instance.ChangeMusic(1);
         SceneManager.LoadScene(4);
+        GameController.gamePaused = false;
     }
 
     public void OnSettingsButton()

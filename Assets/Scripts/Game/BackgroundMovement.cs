@@ -22,6 +22,9 @@ public class BackgroundMovement : MonoBehaviour
     {
         switch (movementOption)
         {   
+            case 2: // = 2 tutorial
+                yOffset += Time.deltaTime / 10f;
+                break;
             case 1: // = 1 move background during game to bottom
                 if(!GameController.gameOver)
                 {   

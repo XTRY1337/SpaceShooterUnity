@@ -79,14 +79,15 @@ public class PlayerController : MonoBehaviour
                 var touchPos = GetWorldTouchPosition(t.position) * -1;
 
                 if(t.phase == TouchPhase.Began && 
-                   !GameController.gamePaused)
+                   (!GameController.gamePaused || SessionManager.GetFirstPlay()))
                 {
                     if(_movePlayerOption == 0)
-                    {
+                    {   
                         if(t.position.x > Screen.width / 2 && !IsTouchOverUI(t.fingerId))
                         {
                             //Click on right side of screen
-                            Shoot();
+                            if(!GameController.gamePaused)
+                                Shoot();
                         }
                         else
                         {
@@ -99,7 +100,8 @@ public class PlayerController : MonoBehaviour
                         if (t.position.x <= Screen.width / 2 && !IsTouchOverUI(t.fingerId))
                         {
                             //Click on left side of screen
-                            Shoot();
+                            if(!GameController.gamePaused)
+                                Shoot();
                         }
                         else
                         {
@@ -280,7 +282,7 @@ public class PlayerController : MonoBehaviour
         ) * speed * GameController.gameSpeed;
     }
 
-    private void Shoot()
+    public void Shoot()
     {
         if(Time.time > nextFire)
         {

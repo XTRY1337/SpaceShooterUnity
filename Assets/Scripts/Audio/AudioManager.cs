@@ -29,7 +29,15 @@ public class AudioManager : MonoBehaviour
 
     void Start()
     {
-        musicSource.clip = background[0];
+        if(SessionManager.GetFirstPlay())
+        {
+            musicSource.clip = background[1];
+        }
+        else
+        {    
+            musicSource.clip = background[0];
+        }
+
         musicSource.loop = true;
         musicSource.volume = (float)SessionManager.GetVolume() / 100;
         musicSource.Play();

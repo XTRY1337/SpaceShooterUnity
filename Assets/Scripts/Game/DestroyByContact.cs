@@ -12,6 +12,7 @@ public class DestroyByContact : MonoBehaviour
     public float blinkTime;
 
     private GameController _gameController;
+    private bool _tutorial;
 
     void Start()
     {   
@@ -26,10 +27,20 @@ public class DestroyByContact : MonoBehaviour
         }
 
         _player = PlayerController.player;
+        _tutorial = SessionManager.GetFirstPlay();
     }
 
     void OnTriggerEnter(Collider other)
     {   
+        Debug.Log(_tutorial);
+        if(_tutorial)
+        {   
+
+            Destroy(other.gameObject);
+            Destroy(gameObject);
+            return;
+        }
+
         if(other.tag == "Boundary")
         {   
             return;

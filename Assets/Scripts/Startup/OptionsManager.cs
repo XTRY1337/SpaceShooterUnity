@@ -361,15 +361,12 @@ public class OptionsManager : MonoBehaviour
     {
         while (true)
         {
-            Debug.Log(IntroGame.invalidKeys);
-
             foreach (KeyCode key in System.Enum.GetValues(typeof(KeyCode)))
             {   
                 if (Input.GetKeyDown(key))
                 {
                     if (IntroGame.invalidKeys.Contains(key))
                     {
-                        Debug.Log("Tecla inválida pressionada: " + key);
                         waitingKey.color = new Color(a:1, r:255, g:0, b:0);
                         waitingKey.text = "Invalid Key: " + key;
                         yield return new WaitForSeconds(1f);

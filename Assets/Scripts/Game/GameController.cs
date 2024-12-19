@@ -33,7 +33,7 @@ public class GameController : MonoBehaviour
     public float spawmZ;
 
     public static bool gameOver;
-    public static float gameSpeed;
+    public static float gameSpeed = 1f;
 
     private int _bestScoreSaver;
     private int _score;
@@ -48,7 +48,7 @@ public class GameController : MonoBehaviour
     public Image buttonImage;
     public Button pauseButton; 
 
-    public static bool gamePaused;
+    public static bool gamePaused = false;
 
     void Start()
     {
@@ -240,5 +240,15 @@ public class GameController : MonoBehaviour
     public void OnVolumeSliderEndDrag()
     {
         SessionManager.SetVolume((int)Math.Round(sliderVolume.value, 0));
+    }
+
+    public void OnBackMenuButton()
+    {
+        if(Time.timeScale == 0)
+        {
+            Time.timeScale = 1;
+        }
+        AudioManager.instance.ChangeMusic(0);
+        SceneManager.LoadScene(2);
     }
 }
