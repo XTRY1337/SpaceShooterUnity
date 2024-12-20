@@ -2,7 +2,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(RectTransform))]
 [DisallowMultipleComponent]
-public class FloatingJoystickMy : MonoBehaviour
+public class FloatingJoystick : MonoBehaviour
 {
     [HideInInspector]
     public RectTransform RectTransform;

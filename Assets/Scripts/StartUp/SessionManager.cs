@@ -3,7 +3,6 @@ using System.IO;
 using UnityEngine;
 
 using Newtonsoft.Json;
-using System;
 
 public class SessionManager : MonoBehaviour
 {
@@ -15,13 +14,12 @@ public class SessionManager : MonoBehaviour
 
         if (!File.Exists(_sessionFilePath))
         {
-            NewDefaulSession();
-            SetDefaultFireKey();
+            CreateDefaulSession();
         }
     }
 
     #region JsonFile
-    private void NewDefaulSession()
+    private void CreateDefaulSession()
     {
         SpaceShooterData defaultData = new SpaceShooterData
         {
@@ -30,11 +28,14 @@ public class SessionManager : MonoBehaviour
             highScore = Constants.DefaulHighScore,
             shipSkinIndex = Constants.DefaulSkin,
             firstPlay = true,
-            realisticMove = false
+            realisticMove = false,
+            fireKey = KeyCode.Mouse0,
+            limitLine = false,
+            playerMovementOption = 0,
+            joystick = false
         };
 
         string json = JsonConvert.SerializeObject(defaultData);
-
         File.WriteAllText(_sessionFilePath, json);
     }
 

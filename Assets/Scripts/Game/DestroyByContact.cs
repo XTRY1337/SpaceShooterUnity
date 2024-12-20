@@ -1,70 +1,72 @@
 using System.Collections;
+
 using UnityEngine;
 
 public class DestroyByContact : MonoBehaviour
 {
-    public GameObject explosion;
-    public GameObject playerExplosion;
-    private GameObject _player;
+    [SerializeField] private GameObject _explosion;
+    [SerializeField] private GameObject _playerExplosion;
+    
+    [SerializeField] private int _blinkCount;
+    [SerializeField] private float _blinkTime;
 
-    public int scoreValue;
-    public int blinkCount;
-    public float blinkTime;
+    private GameManager _gameController;
 
-    private GameController _gameController;
     private bool _tutorial;
+    private float _gameSpeed;
 
     void Start()
     {   
-        GameObject gameControllerObject = GameObject.FindWithTag("GameController");
-        if(gameControllerObject != null)
+        _tutorial = SessionManager.GetFirstPlay();
+        _gameSpeed = SessionManager.GetGameSpeed();
+
+        if(_tutorial)
         {
-            _gameController = gameControllerObject.GetComponent<GameController>();
-        }
-        if(_gameController == null)
-        {
-            Debug.Log("Can't find GameController script");
+            return;
         }
 
-        _player = PlayerController.player;
-        _tutorial = SessionManager.GetFirstPlay();
+        GameObject gameControllerObject = GameObject.FindWithTag("GameController");
+        _gameController = gameControllerObject.GetComponent<GameManager>();
     }
 
     void OnTriggerEnter(Collider other)
     {   
-        Debug.Log(_tutorial);
-        if(_tutorial)
-        {   
-
-            Destroy(other.gameObject);
-            Destroy(gameObject);
-            return;
-        }
+        //TODO: Fix location of asteroid explosion
+        GameObject explosionInstance = Instantiate(_explosion, transform.position, transform.rotation);
+        explosionInstance.AddComponent<DestroyByTime>();
 
         if(other.tag == "Boundary")
         {   
             return;
         }
 
-        //Fix location of asteroid explosion
-        GameObject explosionInstance = Instantiate(explosion, transform.position, transform.rotation);
-        explosionInstance.AddComponent<DestroyByTime>();
+        if(_tutorial)
+        {   
+            if(other.tag == "Player")
+            {
+                CoroutineManager.Instance.StartCoroutine(BlinkEffect());                
+            }
+
+            Destroy(gameObject);
+
+            return;
+        }
 
         if(other.tag == "Player")
         {   
             bool gameOver = _gameController.HandleLifes();
             if(!gameOver)
             {
-                CoroutineHandle.Instance.StartCoroutine(BlinkEffect());
+                CoroutineManager.Instance.StartCoroutine(BlinkEffect());
                 Destroy(gameObject);
                 return;
             }
 
-            GameObject playerExplosionInstance = Instantiate(playerExplosion, other.transform.position, other.transform.rotation);
+            GameObject playerExplosionInstance = Instantiate(_playerExplosion, other.transform.position, other.transform.rotation);
             playerExplosionInstance.AddComponent<DestroyByTime>();
         }
 
-        if(!GameController.gameOver)
+        if(!GameManager.gameOver)
         {
             _gameController.AddScore();
         }
@@ -73,25 +75,21 @@ public class DestroyByContact : MonoBehaviour
         Destroy(gameObject);
     }
 
-    private IEnumerator BlinkEffect()
-    {
-        MeshRenderer playerRenderer = _player.GetComponent<MeshRenderer>();
-        GameObject fireObject = GameObject.FindWithTag("Fire");
+    public IEnumerator BlinkEffect()
+    {   
+        GameObject player = GameObject.FindWithTag("Player");
+        MeshRenderer playerRenderer = player.GetComponent<MeshRenderer>();
+        GameObject engineFire = GameObject.FindWithTag("Fire");
 
-        for (int i = 0; i < blinkCount; i++)
+        for (int i = 0; i < _blinkCount; i++)
         {
-            if(playerRenderer == null)
-            {
-                yield break;
-            }
-
             playerRenderer.enabled = false;
-            fireObject.SetActive(false);
-            yield return new WaitForSeconds(blinkTime);
+            engineFire.SetActive(false);
+            yield return new WaitForSeconds(_blinkTime / _gameSpeed);
             
             playerRenderer.enabled = true;
-            fireObject.SetActive(true);
-            yield return new WaitForSeconds(blinkTime);   
+            engineFire.SetActive(true);
+            yield return new WaitForSeconds(_blinkTime / _gameSpeed);   
         }
     }
 }

@@ -1,8 +1,9 @@
-using System;
 using System.Collections;
-using TMPro;
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
+using TMPro;
 
 public class TextAnimations
 {
@@ -10,7 +11,8 @@ public class TextAnimations
     {
         yield return FadeText(text, fadeDuration);
                
-        SceneManager.LoadScene(SessionManager.GetFirstPlay() ? 1 : 2);
+        int sceneNumber = SessionManager.GetFirstPlay() ? 1 : 2;
+        SceneManager.LoadScene(sceneNumber);
     }
 
     public static IEnumerator FadeText(TextMeshProUGUI text, float fadeDuration)
@@ -36,7 +38,7 @@ public class TextAnimations
                 text.alpha = Mathf.Lerp(0.3f, 1f, progress);
             }
 
-            yield return null; //Wait next frame
+            yield return null;
         }
 
         yield return new WaitForSeconds(0.5f);

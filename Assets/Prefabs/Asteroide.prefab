@@ -113,11 +113,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bbee91c07f35c8943aad456d6086e4e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  explosion: {fileID: 100004, guid: 2857e183f4cd3df4e9096e5b578bd32f, type: 3}
-  playerExplosion: {fileID: 100008, guid: a93496017806b7740910df5fd946f306, type: 3}
-  scoreValue: 0
-  blinkCount: 6
-  blinkTime: 0.1
+  _explosion: {fileID: 100004, guid: 2857e183f4cd3df4e9096e5b578bd32f, type: 3}
+  _playerExplosion: {fileID: 100008, guid: a93496017806b7740910df5fd946f306, type: 3}
+  _blinkCount: 6
+  _blinkTime: 0.1
 --- !u!114 &4492526478383108197
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -130,8 +129,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb045581e50e0314a85e446736408745, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rb: {fileID: 4283817100205163261}
-  speed: -5
+  _objectRb: {fileID: 4283817100205163261}
+  _speed: -5
 --- !u!1001 &9071913025354094207
 PrefabInstance:
   m_ObjectHideFlags: 0

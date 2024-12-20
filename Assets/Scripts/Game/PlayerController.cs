@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.EnhancedTouch;
+
 using ETouch = UnityEngine.InputSystem.EnhancedTouch;
 
 public class PlayerController : MonoBehaviour
@@ -10,10 +12,9 @@ public class PlayerController : MonoBehaviour
     public Material[] materials;
     public static Renderer objectRenderer;
     public static MeshRenderer objectMeshRenderer;
-    public static GameObject player;
     public LineRenderer warningLine;
     public Material warningMaterial;
-    public Rigidbody rb;
+    public Rigidbody _player;
     public GameObject shot;
     public Transform shotSpawn;
     public float speed;
@@ -21,22 +22,22 @@ public class PlayerController : MonoBehaviour
     public float tilt;
     public float fireRate;
     private float nextFire;
-    internal float getHorizontalMove => Input.GetAxis("Horizontal");
-    internal float getVerticalMove => Input.GetAxis("Vertical");
+    public static float GetHorizontalMove => Input.GetAxis("Horizontal");
+    public static float GetVerticalMove => Input.GetAxis("Vertical");
     private static bool _limitLine;
     public Camera gameCamera;
     private Vector3 startingPoint;
     private int leftTouch = 99;
-    internal Vector3 mobileOffset;
+    public static Vector3 MobileOffset;
     private int _movePlayerOption;
     private bool _joystickFlag;
     
     [SerializeField] private Vector2 _joystickSize = new Vector2(300,300);
-    [SerializeField] private FloatingJoystickMy _joystick;
+    [SerializeField] private FloatingJoystick _joystick;
     private Finger _movementFinger;
     private Vector2 _movementAmount;
 
-    internal FloatingJoystickMy getJoystick => _joystick;
+    internal FloatingJoystick getJoystick => _joystick;
 
     private KeyCode _fireKey;
 
@@ -46,8 +47,6 @@ public class PlayerController : MonoBehaviour
         objectRenderer.material = materials[SessionManager.GetSkin()];
         
         objectMeshRenderer = GetComponent<MeshRenderer>();
-
-        player = GameObject.Find("Player");
 
         _limitLine = SessionManager.GetLimiteLine();       
 
@@ -61,11 +60,11 @@ public class PlayerController : MonoBehaviour
         //Player movement
         if(Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
         {   
-            MovePlayer(VectorCreator.SetVector3(x: getHorizontalMove, z: getVerticalMove));
+            MovePlayer(VectorManager.NewVector3(x: GetHorizontalMove, z: GetVerticalMove));
 
             if (Input.GetKey(_fireKey) && 
                 !EventSystem.current.IsPointerOverGameObject() &&
-                !GameController.gamePaused)
+                !GameManager.gamePaused)
             {
                 Shoot();
             }
@@ -78,16 +77,13 @@ public class PlayerController : MonoBehaviour
                 UnityEngine.Touch t = Input.GetTouch(i);
                 var touchPos = GetWorldTouchPosition(t.position) * -1;
 
-                if(t.phase == TouchPhase.Began && 
-                   (!GameController.gamePaused || SessionManager.GetFirstPlay()))
+                if(t.phase == TouchPhase.Began && !GameManager.gamePaused)
                 {
                     if(_movePlayerOption == 0)
                     {   
                         if(t.position.x > Screen.width / 2 && !IsTouchOverUI(t.fingerId))
                         {
-                            //Click on right side of screen
-                            if(!GameController.gamePaused)
-                                Shoot();
+                            Shoot();
                         }
                         else
                         {
@@ -100,7 +96,7 @@ public class PlayerController : MonoBehaviour
                         if (t.position.x <= Screen.width / 2 && !IsTouchOverUI(t.fingerId))
                         {
                             //Click on left side of screen
-                            if(!GameController.gamePaused)
+                            if(!GameManager.gamePaused)
                                 Shoot();
                         }
                         else
@@ -114,25 +110,26 @@ public class PlayerController : MonoBehaviour
                 {
                     if(_joystickFlag)
                     {
-                        mobileOffset.x = _movementAmount.x;
-                        mobileOffset.y = 0;
-                        mobileOffset.z= _movementAmount.y;
-                        MovePlayer(VectorCreator.SetVector3(
+                        MobileOffset.x = _movementAmount.x;
+                        MobileOffset.y = 0;
+                        MobileOffset.z= _movementAmount.y;
+
+                        MovePlayer(VectorManager.NewVector3(
                             x: _movementAmount.x,  
                             z: _movementAmount.y
                         ));
                     }
                     else
                     {
-                        mobileOffset = startingPoint - touchPos;
-                        Vector3 direction = Vector3.ClampMagnitude(new Vector3(mobileOffset.x, 0, mobileOffset.z), 1.0f);
+                        MobileOffset = startingPoint - touchPos;
+                        Vector3 direction = Vector3.ClampMagnitude(new Vector3(MobileOffset.x, 0, MobileOffset.z), 1.0f);
                     
                         MovePlayer(direction);
                     }
                 }
                 else if(t.phase == TouchPhase.Ended && leftTouch == t.fingerId)
                 {
-                    mobileOffset = Vector3.zero;
+                    MobileOffset = Vector3.zero;
                     MovePlayer(Vector3.zero);
                     
                     leftTouch = 99;
@@ -142,16 +139,16 @@ public class PlayerController : MonoBehaviour
         }
 
         //Player zone limit
-        rb.position = VectorCreator.SetVector3(
-            x: Math.Clamp(rb.position.x, xMin, xMax), 
-            z: Math.Clamp(rb.position.z, zMin, zMax)
+        _player.position = VectorManager.NewVector3(
+            x: Math.Clamp(_player.position.x, xMin, xMax), 
+            z: Math.Clamp(_player.position.z, zMin, zMax)
         );
 
         if(_limitLine)
         {
-            float fadeFactor = Mathf.Clamp01(rb.position.z - 2.9f);
+            float fadeFactor = Mathf.Clamp01(_player.position.z - 2.9f);
 
-            if (rb.position.z >= 2.8)
+            if (_player.position.z >= 2.8)
             {
                 warningLine.enabled = true;
 
@@ -169,7 +166,7 @@ public class PlayerController : MonoBehaviour
         }
 
         //Player rotation
-        rb.rotation = Quaternion.Euler(0, 0, rb.linearVelocity.x * tilt);
+        _player.rotation = Quaternion.Euler(0, 0, _player.linearVelocity.x * tilt);
     }
 
     private void OnEnable()
@@ -190,7 +187,7 @@ public class PlayerController : MonoBehaviour
 
     private void HandleFingerMove(Finger movedFinger)
     {
-        if(_joystickFlag  && !GameController.gamePaused)
+        if(_joystickFlag  && !GameManager.gamePaused)
         {
             if(_movementFinger == movedFinger)
             {
@@ -225,7 +222,7 @@ public class PlayerController : MonoBehaviour
 
     private void HandleLoseFinger(Finger lostFinger)
     {
-        if(_joystickFlag  && !GameController.gamePaused)
+        if(_joystickFlag  && !GameManager.gamePaused)
         {
             if(lostFinger == _movementFinger)
             {
@@ -247,7 +244,7 @@ public class PlayerController : MonoBehaviour
         if (IsTouchOverUI(touchedFinger.index))
             return;
 
-        if(_joystickFlag  && !GameController.gamePaused)
+        if(_joystickFlag  && !GameManager.gamePaused)
         {
             if(_movePlayerOption == 0)
             {
@@ -276,10 +273,10 @@ public class PlayerController : MonoBehaviour
 
     private void MovePlayer(Vector3 direction)
     {
-        rb.linearVelocity = VectorCreator.SetVector3(
+        _player.linearVelocity = VectorManager.NewVector3(
             x: direction.x,  
             z: direction.z
-        ) * speed * GameController.gameSpeed;
+        ) * speed * GameManager.gameSpeed;
     }
 
     public void Shoot()
@@ -288,7 +285,7 @@ public class PlayerController : MonoBehaviour
         {
             nextFire = Time.time + fireRate;
             Instantiate(shot, shotSpawn.position, shotSpawn.rotation);
-            AudioManager.instance.PlaySoundEffect("Shot");
+            AudioManager.Instance.PlaySoundEffect("Shot");
         }
     }
 
@@ -326,8 +323,9 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private bool IsTouchOverUI(int fingerId) //Check UI Click on android
+    private bool IsTouchOverUI(int fingerId)
     {
+        //Check UI Click on android
         PointerEventData eventData = new PointerEventData(EventSystem.current)
         {
             pointerId = fingerId,

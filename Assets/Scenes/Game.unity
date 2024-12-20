@@ -331,7 +331,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: a52b2352c3dd6d64bb283fd07fdc3d8a, type: 2}
   warningLine: {fileID: 583035866}
   warningMaterial: {fileID: 2100000, guid: e1c7b2163ffb45443a0ff8d0dcc2b68a, type: 2}
-  rb: {fileID: 93897632}
+  _player: {fileID: 93897632}
   shot: {fileID: 7394157201635814374, guid: ca9215b3ce5e4b5469204311b7c9a095, type: 3}
   shotSpawn: {fileID: 910750496}
   speed: 9
@@ -2021,8 +2021,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 610aedc9d67021f4c9a5c545b343086c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerController: {fileID: 93897638}
-  parallaxSpeed: 0
 --- !u!1001 &988299813
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2840,7 +2838,6 @@ GameObject:
   - component: {fileID: 1340234721}
   - component: {fileID: 1340234720}
   - component: {fileID: 1340234722}
-  - component: {fileID: 1340234723}
   m_Layer: 0
   m_Name: GameController
   m_TagString: GameController
@@ -2921,18 +2918,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1340234719}
   m_CullTransparentMesh: 1
---- !u!114 &1340234723
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1340234719}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 083e82c3e18443a4fb664194a451e84f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1413628635
 GameObject:
   m_ObjectHideFlags: 0

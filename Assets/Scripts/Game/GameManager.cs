@@ -1,12 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class GameController : MonoBehaviour
+using TMPro;
+
+public class GameManager : MonoBehaviour
 {
     [SerializeField] private List<Animation> _scoreAnimation = new(); 
 
@@ -78,11 +80,11 @@ public class GameController : MonoBehaviour
 
         gamePaused = false;
 
-        BackgroundMovement.movementOption = 1;
+        BackgroundMovement.MovementOption = 1;
 
         sliderVolume.onValueChanged.AddListener(val =>
         {
-            StartCoroutine(AudioManager.instance.UpdateVolume(val));
+            StartCoroutine(AudioManager.Instance.UpdateVolume(val));
         });
 
         StartCoroutine(SpawnWaves());
@@ -114,7 +116,7 @@ public class GameController : MonoBehaviour
                     break;
                 }
 
-                Vector3 spawnPosition = VectorCreator.SetVector3(UnityEngine.Random.Range(spawnXMin, spawnXMax), 0, spawmZ);
+                Vector3 spawnPosition = VectorManager.NewVector3(UnityEngine.Random.Range(spawnXMin, spawnXMax), 0, spawmZ);
                 Quaternion spawnRotation = Quaternion.identity;
                 Instantiate(hazard, spawnPosition, spawnRotation);
 
@@ -248,7 +250,7 @@ public class GameController : MonoBehaviour
         {
             Time.timeScale = 1;
         }
-        AudioManager.instance.ChangeMusic(0);
+        AudioManager.Instance.SetNewMusic(0);
         SceneManager.LoadScene(2);
     }
 }

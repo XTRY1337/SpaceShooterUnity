@@ -341,6 +341,7 @@ GameObject:
   - component: {fileID: 136596231}
   - component: {fileID: 136596233}
   - component: {fileID: 136596232}
+  - component: {fileID: 136596234}
   m_Layer: 5
   m_Name: Skin (3)
   m_TagString: Untagged
@@ -405,6 +406,35 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 136596230}
   m_CullTransparentMesh: 1
+--- !u!114 &136596234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 136596230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1351513277}
+          m_TargetAssemblyTypeName: OptionsManager, Assembly-CSharp
+          m_MethodName: OnSkinImageClick
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 3
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &143935027
 GameObject:
   m_ObjectHideFlags: 0
@@ -919,7 +949,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &208060924
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1547,6 +1577,7 @@ GameObject:
   - component: {fileID: 289224792}
   - component: {fileID: 289224794}
   - component: {fileID: 289224793}
+  - component: {fileID: 289224795}
   m_Layer: 5
   m_Name: Skin
   m_TagString: Untagged
@@ -1611,6 +1642,35 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 289224791}
   m_CullTransparentMesh: 1
+--- !u!114 &289224795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 289224791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1351513277}
+          m_TargetAssemblyTypeName: OptionsManager, Assembly-CSharp
+          m_MethodName: OnSkinImageClick
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &317747459
 GameObject:
   m_ObjectHideFlags: 0
@@ -1783,8 +1843,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 610aedc9d67021f4c9a5c545b343086c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerController: {fileID: 0}
-  parallaxSpeed: 0.03
 --- !u!64 &327900551
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -1888,7 +1946,7 @@ GameObject:
   - component: {fileID: 342912229}
   - component: {fileID: 342912228}
   m_Layer: 5
-  m_Name: Dropdown
+  m_Name: ControlsSide
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2872,6 +2930,7 @@ GameObject:
   - component: {fileID: 601390259}
   - component: {fileID: 601390261}
   - component: {fileID: 601390260}
+  - component: {fileID: 601390262}
   m_Layer: 5
   m_Name: Skin (2)
   m_TagString: Untagged
@@ -2936,6 +2995,35 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 601390258}
   m_CullTransparentMesh: 1
+--- !u!114 &601390262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 601390258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1351513277}
+          m_TargetAssemblyTypeName: OptionsManager, Assembly-CSharp
+          m_MethodName: OnSkinImageClick
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 2
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &609271825
 GameObject:
   m_ObjectHideFlags: 0
@@ -3181,7 +3269,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &643149763
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3480,6 +3568,22 @@ MonoBehaviour:
         - m_Target: {fileID: 1351513277}
           m_TargetAssemblyTypeName: OptionsManager, Assembly-CSharp
           m_MethodName: OnGameSpeedSliderEndDrag
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 13
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1351513277}
+          m_TargetAssemblyTypeName: OptionsManager, Assembly-CSharp
+          m_MethodName: OnGameSpeedSliderBeginDrag
           m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
@@ -4837,6 +4941,7 @@ GameObject:
   - component: {fileID: 1068070798}
   - component: {fileID: 1068070800}
   - component: {fileID: 1068070799}
+  - component: {fileID: 1068070801}
   m_Layer: 5
   m_Name: Skin (1)
   m_TagString: Untagged
@@ -4901,6 +5006,35 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1068070797}
   m_CullTransparentMesh: 1
+--- !u!114 &1068070801
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1068070797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1351513277}
+          m_TargetAssemblyTypeName: OptionsManager, Assembly-CSharp
+          m_MethodName: OnSkinImageClick
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 1
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1137479452
 GameObject:
   m_ObjectHideFlags: 0
@@ -5790,7 +5924,7 @@ RectTransform:
   m_Father: {fileID: 278766195}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -6190,6 +6324,7 @@ GameObject:
   - component: {fileID: 1315707614}
   - component: {fileID: 1315707616}
   - component: {fileID: 1315707615}
+  - component: {fileID: 1315707617}
   m_Layer: 5
   m_Name: Skin (4)
   m_TagString: Untagged
@@ -6254,6 +6389,35 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1315707613}
   m_CullTransparentMesh: 1
+--- !u!114 &1315707617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1315707613}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 4
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1351513277}
+          m_TargetAssemblyTypeName: OptionsManager, Assembly-CSharp
+          m_MethodName: OnSkinImageClick
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 4
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1343907796
 GameObject:
   m_ObjectHideFlags: 0
@@ -6450,41 +6614,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db8ad534245c9e44eab511764c287a96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggles:
+  _resetSettingsPanel: {fileID: 1034977172}
+  _realisticBackgroundMoveToggle: {fileID: 1051328386}
+  _limitLineToggle: {fileID: 1930962952}
+  _gameSpeedSlider: {fileID: 668164349}
+  _gameSpeedText: {fileID: 1721071931}
+  _volumeSlider: {fileID: 2041070794}
+  _volumeText: {fileID: 1166223468}
+  _gameSettingsPanel: {fileID: 643149762}
+  _gameSettingsButtonText: {fileID: 2095145507}
+  _gameSettingsButtonImage: {fileID: 1471832403}
+  _gameSettingsButtonTransform: {fileID: 1471832401}
+  _shipSkinToggles:
   - {fileID: 1210765435}
   - {fileID: 958947010}
   - {fileID: 1361130229}
   - {fileID: 1564513298}
   - {fileID: 747247366}
-  realisticBackgroundMoveToggle: {fileID: 1051328386}
-  limitLineToggle: {fileID: 1930962952}
-  joystick: {fileID: 1631425010}
-  sliderGameSpeed: {fileID: 668164349}
-  sliderVolume: {fileID: 2041070794}
-  speedText: {fileID: 1721071931}
-  volumeText: {fileID: 1166223468}
-  panel: {fileID: 1034977172}
-  panelNewKey: {fileID: 208060923}
-  currentKey: {fileID: 917023781}
-  waitingKey: {fileID: 1278998077}
-  dropdown: {fileID: 342912228}
-  buttonGameSettings: {fileID: 1471832400}
-  panelGameSettings: {fileID: 643149762}
-  textButtonGame: {fileID: 2095145507}
-  buttonShipSettings: {fileID: 1955958533}
-  panelShipSettings: {fileID: 1449514373}
-  textButtonShip: {fileID: 212122346}
-  buttonControlsSettings: {fileID: 143948930}
-  panelControlsSettings: {fileID: 1630319386}
-  panelControlsSettingsPC: {fileID: 1137479452}
-  panelControlsSettingsAndroid: {fileID: 650167734}
-  textButtonControls: {fileID: 579166011}
-  skinImages:
-  - {fileID: 289224793}
-  - {fileID: 1068070799}
-  - {fileID: 601390260}
-  - {fileID: 136596232}
-  - {fileID: 1315707615}
+  _shipSettingsPanel: {fileID: 1449514373}
+  _shipSettingsButtonText: {fileID: 212122346}
+  _shipSettingsButtonImage: {fileID: 1955958536}
+  _shipSettingsButtonTransform: {fileID: 1955958534}
+  _joystickToggle: {fileID: 1631425010}
+  _controlsSideDropdown: {fileID: 342912228}
+  _newFireKeyPanel: {fileID: 208060923}
+  _currentKeyText: {fileID: 917023781}
+  _waitingKeyText: {fileID: 1278998077}
+  _generalControlsSettingsPanel: {fileID: 1630319386}
+  _controlsSettingsPCPanel: {fileID: 1137479452}
+  _controlsSettingsAndroidPanel: {fileID: 650167734}
+  _controlsSettingsButtonText: {fileID: 579166011}
+  _controlsSettingsButtonImage: {fileID: 143948933}
+  _controlsSettingsTransform: {fileID: 143948931}
 --- !u!114 &1351513278
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7194,7 +7355,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1449514374
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7627,8 +7788,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 847573544}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 3, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -8499,7 +8660,7 @@ RectTransform:
   m_Father: {fileID: 1481966548}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -10089,8 +10250,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 1363251484}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0}
-  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}

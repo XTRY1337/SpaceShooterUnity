@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class DestroyByTime : MonoBehaviour
 {
-    private float lifeTime = 2f;
     void Start()
     {
+        float lifeTime = 2f;
         Destroy(gameObject, lifeTime);
     }
 }
