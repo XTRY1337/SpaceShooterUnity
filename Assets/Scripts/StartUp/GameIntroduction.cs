@@ -26,7 +26,7 @@ public class GameIntroduction : MonoBehaviour
             KeyCode.F9, KeyCode.F10, KeyCode.F11, KeyCode.F12,
             KeyCode.Print, KeyCode.SysReq, KeyCode.ScrollLock,
             KeyCode.LeftWindows, KeyCode.RightWindows, 
-            KeyCode.LeftCommand, KeyCode.RightCommand
+            KeyCode.LeftCommand, KeyCode.RightCommand, KeyCode.Return
         };
 
         _tutorialAvailableKeys = new HashSet<KeyCode>

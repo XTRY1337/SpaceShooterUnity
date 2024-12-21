@@ -64,7 +64,7 @@ public class PlayerController : MonoBehaviour
 
             if (Input.GetKey(_fireKey) && 
                 !EventSystem.current.IsPointerOverGameObject() &&
-                !GameManager.gamePaused)
+                !GameManager.IsGamePaused)
             {
                 Shoot();
             }
@@ -77,7 +77,7 @@ public class PlayerController : MonoBehaviour
                 UnityEngine.Touch t = Input.GetTouch(i);
                 var touchPos = GetWorldTouchPosition(t.position) * -1;
 
-                if(t.phase == TouchPhase.Began && !GameManager.gamePaused)
+                if(t.phase == TouchPhase.Began && !GameManager.IsGamePaused)
                 {
                     if(_movePlayerOption == 0)
                     {   
@@ -96,7 +96,7 @@ public class PlayerController : MonoBehaviour
                         if (t.position.x <= Screen.width / 2 && !IsTouchOverUI(t.fingerId))
                         {
                             //Click on left side of screen
-                            if(!GameManager.gamePaused)
+                            if(!GameManager.IsGamePaused)
                                 Shoot();
                         }
                         else
@@ -187,7 +187,7 @@ public class PlayerController : MonoBehaviour
 
     private void HandleFingerMove(Finger movedFinger)
     {
-        if(_joystickFlag  && !GameManager.gamePaused)
+        if(_joystickFlag  && !GameManager.IsGamePaused)
         {
             if(_movementFinger == movedFinger)
             {
@@ -222,7 +222,7 @@ public class PlayerController : MonoBehaviour
 
     private void HandleLoseFinger(Finger lostFinger)
     {
-        if(_joystickFlag  && !GameManager.gamePaused)
+        if(_joystickFlag  && !GameManager.IsGamePaused)
         {
             if(lostFinger == _movementFinger)
             {
@@ -244,7 +244,7 @@ public class PlayerController : MonoBehaviour
         if (IsTouchOverUI(touchedFinger.index))
             return;
 
-        if(_joystickFlag  && !GameManager.gamePaused)
+        if(_joystickFlag  && !GameManager.IsGamePaused)
         {
             if(_movePlayerOption == 0)
             {
@@ -276,7 +276,7 @@ public class PlayerController : MonoBehaviour
         _player.linearVelocity = VectorManager.NewVector3(
             x: direction.x,  
             z: direction.z
-        ) * speed * GameManager.gameSpeed;
+        ) * speed * GameManager.GameSpeed;
     }
 
     public void Shoot()

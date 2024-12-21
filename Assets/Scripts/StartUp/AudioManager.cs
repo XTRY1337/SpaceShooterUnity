@@ -31,6 +31,11 @@ public class AudioManager : MonoBehaviour
 
     public void SetNewMusic(int index)
     {
+        if (_musicSource.clip == _backgroundClips[index] && _musicSource.isPlaying)
+        {
+            return; //Same music
+        }
+
         _musicSource.Stop();
         _musicSource.clip = _backgroundClips[index];
         _musicSource.loop = true;

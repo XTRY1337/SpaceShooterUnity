@@ -7,17 +7,6 @@ public class MoveGameObject : MonoBehaviour
 
     void Start()
     {   
-        float gameSpeed;
-        
-        if(GameManager.gameSpeed == 0) // == 0 when is Intro
-        {
-            gameSpeed = 1f;
-        }
-        else
-        {
-            gameSpeed = GameManager.gameSpeed;
-        }
-
-        _objectRb.linearVelocity = transform.forward * _speed * gameSpeed;
+        _objectRb.linearVelocity = transform.forward * _speed * GameManager.GameSpeed;
     }
 }

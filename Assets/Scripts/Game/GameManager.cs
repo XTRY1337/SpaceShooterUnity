@@ -10,157 +10,144 @@ using TMPro;
 
 public class GameManager : MonoBehaviour
 {
+    [Header("-- Game State --")]
+    [SerializeField] private GameObject _restartButton;
+    [SerializeField] private GameObject _menuButton;
+    [SerializeField] private TextMeshProUGUI _gameOverText;
+
+    [Header("-- Score and Lifes --")]
     [SerializeField] private List<Animation> _scoreAnimation = new(); 
+    [SerializeField] private List<Image> _heartsInGame = new();
+    [SerializeField] private Sprite _fullHeartSprite;
+    [SerializeField] private Sprite _emptyHeartSprite;
+    [SerializeField] private TextMeshProUGUI _scoreText;
+    [SerializeField] private TextMeshProUGUI _bestScoreText;
+    [SerializeField] private TextMeshProUGUI _newScoreInfoText;
 
-    public PlayerController playerController;
-    public GameObject hazard;
-    public GameObject restartButton;
-    public GameObject menuButton;
-    public GameObject panel;
+    [Header("-- Pause Menu --")]
+    [SerializeField] private List<Sprite> _pauseStartSprite = new();
+    [SerializeField] private PlayerController _playerController;    
+    [SerializeField] private Slider _volumeSlider;
+    [SerializeField] private Button _pauseButton; 
+    [SerializeField] private TextMeshProUGUI _volumeText;
+    [SerializeField] private GameObject _pausePanel;
+    [SerializeField] private Image _pauseButtonImage;
 
-    public Slider sliderVolume;
+    [Header("-- Wave Parameters --")]
+    [SerializeField] private GameObject _hazard;
+    [SerializeField] private int _hazardsPerWave;
+    [SerializeField] private float _spawnWaitTime;
+    [SerializeField] private float _startWaitTime;
+    [SerializeField] private float _spawnXMin;
+    [SerializeField] private float _spawnXMax;
+    [SerializeField] private float _spawmZ;
 
-    public TextMeshProUGUI scoreText;
-    public TextMeshProUGUI bestScore;
-    public TextMeshProUGUI gameOverText;
-    public TextMeshProUGUI newScoreInfo;
-    public TextMeshProUGUI volumeText;
-
-    public int hazardCount;
-    public float spawnWait;
-    public float startWait;
-    public float waveWait;
-    public float spawnXMin;
-    public float spawnXMax;
-    public float spawmZ;
-
-    public static bool gameOver;
-    public static float gameSpeed = 1f;
-
-    private int _bestScoreSaver;
+    private bool _isFirstWave;
+    private int _playerHealth;
+    private int _bestScore;
     private int _score;
-    private bool _restart;
+    private int _volume;
 
-    public int health = 3;
-    public List<Image> hearts = new();
-    public Sprite fullHeart;
-    public Sprite emptyHeart;
+    public static float GameSpeed => _gameSpeed;
+    private static float _gameSpeed = Constants.DefaulGameSpeed;
 
-    public List<Sprite> pauseStartImg = new();
-    public Image buttonImage;
-    public Button pauseButton; 
+    public static bool IsGamePaused => _isGamePaused;
+    private static bool _isGamePaused;
 
-    public static bool gamePaused = false;
+    public static bool IsGameOver => _isGameOver;
+    private static bool _isGameOver;
 
     void Start()
     {
-        gameOver = false;
-        gameOverText.text = "";
-
-        _restart = false;
-        restartButton.SetActive(false);
-
-        menuButton.SetActive(false);
-        pauseButton.gameObject.SetActive(true);
-        _score = 0;
-        scoreText.text = "";
-        WriteScore();
-
-        newScoreInfo.text = "";
-
-        _bestScoreSaver = SessionManager.GetHighScore();
-        bestScore.text = $"Best Score: {_bestScoreSaver}";
-
-        gameSpeed = SessionManager.GetGameSpeed();
-        panel.SetActive(false);
-
-        float volume = SessionManager.GetVolume();
-        sliderVolume.value = volume;
-        volumeText.text = $"{volume}%";
-
-        gamePaused = false;
-
         BackgroundMovement.MovementOption = 1;
 
-        sliderVolume.onValueChanged.AddListener(val =>
-        {
-            StartCoroutine(AudioManager.Instance.UpdateVolume(val));
-        });
+        _score = 0;
+        _playerHealth = 3;
+        _isFirstWave = true;
+        _isGamePaused = false;
+        _isGameOver = false;
+        _bestScore = SessionManager.GetHighScore();
+        _gameSpeed = SessionManager.GetGameSpeed();
+        _volume = SessionManager.GetVolume();
+        _volumeSlider.value = _volume;
+        
+        _gameOverText.text = "";
+        _scoreText.text = "";
+        _newScoreInfoText.text = "";   
+
+        WriteVolume();
+        WriteBestScore();
+        WriteScore();
+
+        _restartButton.SetActive(false);
+        _menuButton.SetActive(false);
+        _pauseButton.gameObject.SetActive(true);
+        _pausePanel.SetActive(false);
 
         StartCoroutine(SpawnWaves());
     }
 
-    void Update()
-    {
-        foreach(var img in hearts)
-        {
-            img.sprite = emptyHeart;
-        }
-
-        for(int i = 0; i < health; i++)
-        {
-            hearts[i].sprite = fullHeart;
-        }
-    }
-
+    #region GameEvents
     IEnumerator SpawnWaves()
     {
-        yield return new WaitForSeconds(startWait / gameSpeed);
-
-        while(!gameOver)
+        if(_isFirstWave)
         {
-            for(int i = 0; i < hazardCount; i++)
+            _isFirstWave = false;
+            yield return new WaitForSeconds(_startWaitTime / GameSpeed);
+        }
+
+        while(!IsGameOver)
+        {
+            if(true) // Level 1 / Stage 1
             {
-                if(gameOver)
-                {   
-                    break;
+                for(int i = 0; i < _hazardsPerWave; i++)
+                {
+                    if(IsGameOver)
+                    {   
+                        break;
+                    }
+
+                    Vector3 spawnPosition = VectorManager.NewVector3(UnityEngine.Random.Range(_spawnXMin, _spawnXMax), 0, _spawmZ);
+                    Quaternion spawnRotation = Quaternion.identity;
+                    Instantiate(_hazard, spawnPosition, spawnRotation);
+
+                    yield return new WaitForSeconds(_spawnWaitTime / GameSpeed);
                 }
-
-                Vector3 spawnPosition = VectorManager.NewVector3(UnityEngine.Random.Range(spawnXMin, spawnXMax), 0, spawmZ);
-                Quaternion spawnRotation = Quaternion.identity;
-                Instantiate(hazard, spawnPosition, spawnRotation);
-
-                yield return new WaitForSeconds(spawnWait / gameSpeed);
             }
-
-            yield return new WaitForSeconds(waveWait / gameSpeed);
+            //else if(false){} // Level x / Stage x
+            //etc
         }
     }
-
-    public void GameOver()
+    
+    private void UpdateHearts()
     {
-        StopCoroutine(SpawnWaves());
-
-        gameOver = true;
-        gameOverText.text = "Game Over";
-
-        _restart = true;
-        restartButton.SetActive(true);
-        menuButton.SetActive(true);
-        pauseButton.gameObject.SetActive(false);
-        playerController.ClearJoystick();
-
-        SessionManager.SetHighScore(_score);
+        for (int i = 0; i < _heartsInGame.Count; i++)
+        {
+            _heartsInGame[i].sprite = i < _playerHealth ? _fullHeartSprite : _emptyHeartSprite;
+        }
     }
 
     public bool HandleLifes()
     {
-        health--;
-        if(health > 0)
+        _playerHealth--;
+
+        UpdateHearts();
+
+        if(_playerHealth > 0)
         {
             int saveDiference = _score - Constants.RemoveScore;
             _score -= Constants.RemoveScore;
-            newScoreInfo.text = $" -{Constants.RemoveScore}";
+            _newScoreInfoText.text = $" -{Constants.RemoveScore}";
 
             if(_score < 0)
             {   
                 if(_score == -Constants.RemoveScore)
                 {   
-                    newScoreInfo.text = string.Empty;          
+                    _newScoreInfoText.text = string.Empty;          
                 }
                 else
                 {
-                    newScoreInfo.text = $" {saveDiference}";
+                    _newScoreInfoText.text = $" {saveDiference}";
                 }
                 _score = 0;
             }
@@ -174,74 +161,103 @@ public class GameManager : MonoBehaviour
         }
 
         _scoreAnimation[2].Play("Lifes");
-        GameOver();
+        OnGameOver();
+
         return true;
     }
+    #endregion
 
+    #region GameController
+    public void OnGameOver()
+    {
+        StopCoroutine(SpawnWaves());
+
+        _isGameOver = true;
+        _gameOverText.text = "Game Over";
+
+        _restartButton.SetActive(true);
+        _menuButton.SetActive(true);
+        _pauseButton.gameObject.SetActive(false);
+        _playerController.ClearJoystick();
+
+        SessionManager.SetHighScore(_score);
+    }
+    
     public void OnRestartButton()
     {
-        if(_restart)
-        {   
-            SceneManager.LoadScene(4);
-        }
+        SceneManager.LoadScene(4);
     }
+    #endregion
 
+    #region Score
     public void AddScore()
     {
         _score += Constants.AddScore;
-        WriteScore();
-        newScoreInfo.text = $" +{Constants.AddScore}";
+        _newScoreInfoText.text = $" +{Constants.AddScore}";
 
+        WriteScore();
         _scoreAnimation[0].Play("ScoreUpWithVanish");
         
-        if(_score > _bestScoreSaver)
+        if(_score > _bestScore)
         {
-            _bestScoreSaver = _score;
+            _bestScore = _score;
+
             WriteBestScore();
             _scoreAnimation[1].Play("ScoreUp");
         }
     }
 
-    public void WriteScore()
+    private void WriteScore()
     {
-        scoreText.text = $"Score: {_score}";
+        _scoreText.text = $"Score: {_score}";
     }
 
-    public void WriteBestScore()
+    private void WriteBestScore()
     {
-        bestScore.text = $"Best Score: {_bestScoreSaver}";
+        _bestScoreText.text = $"Best Score: {_bestScore}";
     }
+    #endregion
 
+    #region PauseMenu
     public void OnPauseButton()
-    {
+    {   
+        _pauseButtonImage.sprite = _pauseStartSprite[0];
         Time.timeScale = 0;
-        gamePaused = true;
-        panel.SetActive(true);
-        playerController.ClearJoystick();
-        buttonImage.sprite = pauseStartImg[0];
-        pauseButton.onClick.RemoveAllListeners();
-        pauseButton.onClick.AddListener(OnPlayButton);
+        _isGamePaused = true;
+
+        _pausePanel.SetActive(true);
+        _playerController.ClearJoystick();
+        _pauseButton.onClick.RemoveAllListeners();
+        _pauseButton.onClick.AddListener(OnPlayButton);
     }
 
     public void OnPlayButton()
-    {
+    {   
+        _pauseButtonImage.sprite = _pauseStartSprite[1];
         Time.timeScale = 1;
-        gamePaused = false;
-        panel.SetActive(false);
-        buttonImage.sprite = pauseStartImg[1];
-        pauseButton.onClick.RemoveAllListeners();
-        pauseButton.onClick.AddListener(OnPauseButton);
+        _isGamePaused = false;
+
+        _pausePanel.SetActive(false);
+        _pauseButton.onClick.RemoveAllListeners();
+        _pauseButton.onClick.AddListener(OnPauseButton);
     }
 
     public void OnVolumeSliderValueChange()
     {
-        float vol = (float)Math.Round(sliderVolume.value, 0);
-        volumeText.text = $"{vol}%";
+        _volume = (int)Math.Round(_volumeSlider.value, 0);
+        StartCoroutine(AudioManager.Instance.UpdateVolume(_volume));
+        WriteVolume();
     }
 
     public void OnVolumeSliderEndDrag()
     {
-        SessionManager.SetVolume((int)Math.Round(sliderVolume.value, 0));
+        _volume = (int)Math.Round(_volumeSlider.value, 0);
+        SessionManager.SetVolume(_volume);
+    }
+    
+    private void WriteVolume()
+    {
+        _volumeText.text = $"{_volume}%";
     }
 
     public void OnBackMenuButton()
@@ -250,7 +266,9 @@ public class GameManager : MonoBehaviour
         {
             Time.timeScale = 1;
         }
+
         AudioManager.Instance.SetNewMusic(0);
         SceneManager.LoadScene(2);
     }
+    #endregion
 }

@@ -31,7 +31,7 @@ public class BackgroundMovement : MonoBehaviour
         switch (MovementOption)
         {   
             case 1: // = 1 move background during game to bottom
-                if(!GameManager.gameOver)
+                if(!GameManager.IsGameOver)
                 {   
                     _yOffset += Time.deltaTime * _gameSpeed / 10f;
 
@@ -70,9 +70,11 @@ public class BackgroundMovement : MonoBehaviour
                         }
                     }
                 }
+                
                 break;
             case 2: // = 2 tutorial
                 _yOffset += Time.deltaTime / 10f;
+
                 break;
             default: // = 0 move the background with mouse
                 if (!EventSystem.current.IsPointerOverGameObject())
@@ -85,6 +87,7 @@ public class BackgroundMovement : MonoBehaviour
                     _xOffset = xNormalized * _parallaxSpeed;
                     _yOffset = yNormalized * _parallaxSpeed;
                 }
+
                 break;
         }
 

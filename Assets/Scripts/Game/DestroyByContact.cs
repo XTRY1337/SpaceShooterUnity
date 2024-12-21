@@ -1,5 +1,4 @@
 using System.Collections;
-
 using UnityEngine;
 
 public class DestroyByContact : MonoBehaviour
@@ -31,10 +30,6 @@ public class DestroyByContact : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {   
-        //TODO: Fix location of asteroid explosion
-        GameObject explosionInstance = Instantiate(_explosion, transform.position, transform.rotation);
-        explosionInstance.AddComponent<DestroyByTime>();
-
         if(other.tag == "Boundary")
         {   
             return;
@@ -62,14 +57,15 @@ public class DestroyByContact : MonoBehaviour
                 return;
             }
 
-            GameObject playerExplosionInstance = Instantiate(_playerExplosion, other.transform.position, other.transform.rotation);
-            playerExplosionInstance.AddComponent<DestroyByTime>();
+            Instantiate(_playerExplosion, other.transform.position, other.transform.rotation);
         }
 
-        if(!GameManager.gameOver)
+        if(!GameManager.IsGameOver)
         {
             _gameController.AddScore();
         }
+
+        Instantiate(_explosion, transform.position, transform.rotation);
 
         Destroy(other.gameObject);
         Destroy(gameObject);
