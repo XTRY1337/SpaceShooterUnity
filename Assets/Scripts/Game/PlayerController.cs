@@ -9,58 +9,62 @@ using ETouch = UnityEngine.InputSystem.EnhancedTouch;
 
 public class PlayerController : MonoBehaviour
 {
-    public Material[] materials;
-    public static Renderer objectRenderer;
-    public static MeshRenderer objectMeshRenderer;
+    [Header("-- Game --")]
+    [SerializeField] private GameObject _shot;
+    [SerializeField] private Transform _shotSpawn;
+    [SerializeField] private float _speed;
+    [SerializeField] private float _xMin, _xMax, _zMin, _zMax;
+    [SerializeField] private float _tilt;
+    [SerializeField] private float _fireRate;
+    private bool _isWindows;
+    private int _screenWidth;
+
+    [Header("-- Limit line --")]
     public LineRenderer warningLine;
     public Material warningMaterial;
-    public Rigidbody _player;
-    public GameObject shot;
-    public Transform shotSpawn;
-    public float speed;
-    public float xMin, xMax, zMin, zMax;
-    public float tilt;
-    public float fireRate;
-    private float nextFire;
+    private bool _limitLine;
+
+    [Header("-- Screen touch --")]
+    private Vector3 _startingPoint;
+    private int _leftTouch = 99; // No active touch
+    private static Vector3 _mobileMovement;
+    public static Vector3 MobileMovement => _mobileMovement;
+    
+    [Header("-- Player --")]
+    [SerializeField] private Rigidbody _player;
+    [SerializeField] private Material[] _playerMaterials;
+    [SerializeField] private Renderer _playerRenderer;
+    private KeyCode _fireKey;
+    private float _nextFire;
+    private int _movePlayerOption;
     public static float GetHorizontalMove => Input.GetAxis("Horizontal");
     public static float GetVerticalMove => Input.GetAxis("Vertical");
-    private static bool _limitLine;
-    public Camera gameCamera;
-    private Vector3 startingPoint;
-    private int leftTouch = 99;
-    public static Vector3 MobileOffset;
-    private int _movePlayerOption;
-    private bool _joystickFlag;
-    
-    [SerializeField] private Vector2 _joystickSize = new Vector2(300,300);
+
+    [Header("-- Joystick --")]
+    [SerializeField] private Vector2 _joystickSize = new Vector2(300, 300);
     [SerializeField] private FloatingJoystick _joystick;
     private Finger _movementFinger;
     private Vector2 _movementAmount;
-
-    internal FloatingJoystick getJoystick => _joystick;
-
-    private KeyCode _fireKey;
+    private bool _joystickFlag;
 
     void Start()
     {
-        objectRenderer = GetComponent<Renderer>();
-        objectRenderer.material = materials[SessionManager.GetSkin()];
-        
-        objectMeshRenderer = GetComponent<MeshRenderer>();
-
+        _playerRenderer.material = _playerMaterials[SessionManager.GetSkin()];
         _limitLine = SessionManager.GetLimiteLine();       
-
         _movePlayerOption = SessionManager.GetPlayerMovementControlOption();
         _joystickFlag = SessionManager.GetJoystick();
         _fireKey = SessionManager.GetFireKey();
+        _isWindows = Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor;
+        _screenWidth = Screen.width;
     }
 
     void Update()
     {   
         //Player movement
-        if(Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
+        if(_isWindows)
         {   
-            MovePlayer(VectorManager.NewVector3(x: GetHorizontalMove, z: GetVerticalMove));
+            Vector3 playerMovement = VectorManager.NewVector3(x: GetHorizontalMove, z: GetVerticalMove);
+            MovePlayer(playerMovement);
 
             if (Input.GetKey(_fireKey) && 
                 !EventSystem.current.IsPointerOverGameObject() &&
@@ -69,104 +73,85 @@ public class PlayerController : MonoBehaviour
                 Shoot();
             }
         }
-        else if(Application.platform == RuntimePlatform.Android)
+        else
         {   
             int i = 0;
-            while(i < Input.touchCount)
+            int touchCount = Input.touchCount;
+            while(i < touchCount)
             {
-                UnityEngine.Touch t = Input.GetTouch(i);
-                var touchPos = GetWorldTouchPosition(t.position) * -1;
+                UnityEngine.Touch touch = Input.GetTouch(i);
+                var touchPos = GetWorldTouchPosition(touch.position) * -1;
 
-                if(t.phase == TouchPhase.Began && !GameManager.IsGamePaused)
+                if(touch.phase == TouchPhase.Began && !GameManager.IsGamePaused)
                 {
-                    if(_movePlayerOption == 0)
-                    {   
-                        if(t.position.x > Screen.width / 2 && !IsTouchOverUI(t.fingerId))
-                        {
-                            Shoot();
-                        }
-                        else
-                        {
-                            leftTouch = t.fingerId;
-                            startingPoint = touchPos;
-                        }
-                    }
-                    else
+                    switch(_movePlayerOption)
                     {
-                        if (t.position.x <= Screen.width / 2 && !IsTouchOverUI(t.fingerId))
-                        {
-                            //Click on left side of screen
-                            if(!GameManager.IsGamePaused)
+                        case 0:
+                            if(touch.position.x > _screenWidth / 2 && !IsTouchOverUI(touch.fingerId))
+                            {
                                 Shoot();
-                        }
-                        else
-                        {
-                            leftTouch = t.fingerId;
-                            startingPoint = touchPos;
-                        }
+                            }
+                            else
+                            {
+                                _leftTouch = touch.fingerId;
+                                _startingPoint = touchPos;
+                            }
+                            break;
+                        case 1:
+                            if (touch.position.x <= _screenWidth / 2 && !IsTouchOverUI(touch.fingerId))
+                            {
+                                Shoot();
+                            }
+                            else
+                            {
+                                _leftTouch = touch.fingerId;
+                                _startingPoint = touchPos;
+                            }
+                            break;
+                        default:
+                            break;
                     }
                 }
-                else if(t.phase == TouchPhase.Moved && leftTouch == t.fingerId)
+                else if(touch.phase == TouchPhase.Moved && _leftTouch == touch.fingerId)
                 {
                     if(_joystickFlag)
                     {
-                        MobileOffset.x = _movementAmount.x;
-                        MobileOffset.y = 0;
-                        MobileOffset.z= _movementAmount.y;
-
-                        MovePlayer(VectorManager.NewVector3(
-                            x: _movementAmount.x,  
-                            z: _movementAmount.y
-                        ));
+                        _mobileMovement = VectorManager.NewVector3(x: _movementAmount.x, z: _movementAmount.y);
+                        MovePlayer(_mobileMovement);
                     }
                     else
                     {
-                        MobileOffset = startingPoint - touchPos;
-                        Vector3 direction = Vector3.ClampMagnitude(new Vector3(MobileOffset.x, 0, MobileOffset.z), 1.0f);
-                    
+                        _mobileMovement = _startingPoint - touchPos;
+                        Vector3 direction = Vector3.ClampMagnitude(new Vector3(_mobileMovement.x, 0, _mobileMovement.z), 1.0f);
                         MovePlayer(direction);
                     }
                 }
-                else if(t.phase == TouchPhase.Ended && leftTouch == t.fingerId)
+                else if(touch.phase == TouchPhase.Ended && _leftTouch == touch.fingerId)
                 {
-                    MobileOffset = Vector3.zero;
+                    _mobileMovement = Vector3.zero;
                     MovePlayer(Vector3.zero);
                     
-                    leftTouch = 99;
+                    _leftTouch = 99;
                 }
+
                 i++;
             }
         }
 
         //Player zone limit
         _player.position = VectorManager.NewVector3(
-            x: Math.Clamp(_player.position.x, xMin, xMax), 
-            z: Math.Clamp(_player.position.z, zMin, zMax)
+            x: Math.Clamp(_player.position.x, _xMin, _xMax), 
+            z: Math.Clamp(_player.position.z, _zMin, _zMax)
         );
 
+        //Player rotation
+        _player.rotation = Quaternion.Euler(0, 0, _player.linearVelocity.x * _tilt);
+
+        //Limite line
         if(_limitLine)
         {
-            float fadeFactor = Mathf.Clamp01(_player.position.z - 2.9f);
-
-            if (_player.position.z >= 2.8)
-            {
-                warningLine.enabled = true;
-
-                Color lineColor = warningMaterial.color;
-                lineColor.a = fadeFactor;
-                warningMaterial.color = lineColor;
-
-                warningLine.SetPosition(0, new Vector3(-3000, 0, zMax + 1));
-                warningLine.SetPosition(1, new Vector3(3000, 0, zMax + 1));
-            }
-            else
-            {
-                warningLine.enabled = false;
-            }
+            LimiteLineHandle();
         }
-
-        //Player rotation
-        _player.rotation = Quaternion.Euler(0, 0, _player.linearVelocity.x * tilt);
     }
 
     private void OnEnable()
@@ -244,29 +229,24 @@ public class PlayerController : MonoBehaviour
         if (IsTouchOverUI(touchedFinger.index))
             return;
 
-        if(_joystickFlag  && !GameManager.IsGamePaused)
+        if(_joystickFlag && _movementFinger is not null && !GameManager.IsGamePaused)
         {
-            if(_movePlayerOption == 0)
+            switch(_movePlayerOption)
             {
-                if(_movementFinger == null && touchedFinger.screenPosition.x < Screen.width / 2f)
-                {
-                    _movementFinger = touchedFinger;
-                    _movementAmount = Vector2.zero;
-                    _joystick.gameObject.SetActive(true);
-                    _joystick.RectTransform.sizeDelta = _joystickSize;
-                    _joystick.RectTransform.transform.position = ClampStartPosition(touchedFinger.screenPosition);
-                }
-            }
-            else
-            {
-                if(_movementFinger == null && touchedFinger.screenPosition.x > Screen.width / 2f)
-                {
-                    _movementFinger = touchedFinger;
-                    _movementAmount = Vector2.zero;
-                    _joystick.gameObject.SetActive(true);
-                    _joystick.RectTransform.sizeDelta = _joystickSize;
-                    _joystick.RectTransform.transform.position = ClampStartPosition(touchedFinger.screenPosition);
-                }
+                case 0:
+                    if(touchedFinger.screenPosition.x < Screen.width / 2f)
+                    {
+                        ShowJoystick(touchedFinger);
+                    }
+                    break;
+                case 1:
+                    if(touchedFinger.screenPosition.x > Screen.width / 2f)
+                    {
+                        ShowJoystick(touchedFinger);
+                    }
+                    break;
+                default:
+                    break;
             }
         }
     }
@@ -276,36 +256,36 @@ public class PlayerController : MonoBehaviour
         _player.linearVelocity = VectorManager.NewVector3(
             x: direction.x,  
             z: direction.z
-        ) * speed * GameManager.GameSpeed;
+        ) * _speed * GameManager.GameSpeed;
     }
 
     public void Shoot()
     {
-        if(Time.time > nextFire)
+        if(Time.time > _nextFire)
         {
-            nextFire = Time.time + fireRate;
-            Instantiate(shot, shotSpawn.position, shotSpawn.rotation);
+            _nextFire = Time.time + _fireRate;
+            Instantiate(_shot, _shotSpawn.position, _shotSpawn.rotation);
             AudioManager.Instance.PlaySoundEffect("Shot");
         }
     }
 
-    private Vector2 ClampStartPosition(Vector2 StartPosition)
+    private Vector2 ClampStartPosition(Vector2 startPosition)
     {
-        if (StartPosition.x < _joystickSize.x / 2)
+        if (startPosition.x < _joystickSize.x / 2)
         {
-            StartPosition.x = _joystickSize.x / 2;
+            startPosition.x = _joystickSize.x / 2;
         }
 
-        if (StartPosition.y < _joystickSize.y / 2)
+        if (startPosition.y < _joystickSize.y / 2)
         {
-            StartPosition.y = _joystickSize.y / 2;
+            startPosition.y = _joystickSize.y / 2;
         }
-        else if (StartPosition.y > Screen.height - _joystickSize.y / 2)
+        else if (startPosition.y > Screen.height - _joystickSize.y / 2)
         {
-            StartPosition.y = Screen.height - _joystickSize.y / 2;
+            startPosition.y = Screen.height - _joystickSize.y / 2;
         }
 
-        return StartPosition;
+        return startPosition;
     }
 
     private Vector3 GetWorldTouchPosition(Vector2 screenPosition)
@@ -323,6 +303,15 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void ShowJoystick(Finger touchedFinger)
+    {
+        _movementFinger = touchedFinger;
+        _movementAmount = Vector2.zero;
+        _joystick.gameObject.SetActive(true);
+        _joystick.RectTransform.sizeDelta = _joystickSize;
+        _joystick.RectTransform.transform.position = ClampStartPosition(touchedFinger.screenPosition);
+    }
+
     private bool IsTouchOverUI(int fingerId)
     {
         //Check UI Click on android
@@ -336,5 +325,26 @@ public class PlayerController : MonoBehaviour
         EventSystem.current.RaycastAll(eventData, results);
 
         return results.Count > 0;
+    }
+
+    private void LimiteLineHandle()
+    {
+        float fadeFactor = Mathf.Clamp01(_player.position.z - 2.9f);
+
+        if (_player.position.z >= 2.8)
+        {
+            warningLine.enabled = true;
+
+            Color lineColor = warningMaterial.color;
+            lineColor.a = fadeFactor;
+            warningMaterial.color = lineColor;
+
+            warningLine.SetPosition(0, new Vector3(-3000, 0, _zMax + 1));
+            warningLine.SetPosition(1, new Vector3(3000, 0, _zMax + 1));
+        }
+        else
+        {
+            warningLine.enabled = false;
+        }
     }
 }

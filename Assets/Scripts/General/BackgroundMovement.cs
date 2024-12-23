@@ -47,8 +47,8 @@ public class BackgroundMovement : MonoBehaviour
                         }
                         else if(Application.platform == RuntimePlatform.Android)
                         {
-                            playerHorizontalMovement = PlayerController.MobileOffset.x;
-                            playerVerticalMovement = PlayerController.MobileOffset.z;
+                            playerHorizontalMovement = PlayerController.MobileMovement.x;
+                            playerVerticalMovement = PlayerController.MobileMovement.z;
                         }
 
                         if (playerHorizontalMovement > 0)

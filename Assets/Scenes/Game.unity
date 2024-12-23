@@ -323,25 +323,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8832b5b2cf244f4cb4c7a5a3ec94d67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  materials:
+  _shot: {fileID: 7394157201635814374, guid: ca9215b3ce5e4b5469204311b7c9a095, type: 3}
+  _shotSpawn: {fileID: 910750496}
+  _speed: 9
+  _xMin: -8.2
+  _xMax: 8.2
+  _zMin: -1
+  _zMax: 3
+  _tilt: -3.5
+  _fireRate: 0.25
+  warningLine: {fileID: 583035866}
+  warningMaterial: {fileID: 2100000, guid: e1c7b2163ffb45443a0ff8d0dcc2b68a, type: 2}
+  _player: {fileID: 93897632}
+  _playerMaterials:
   - {fileID: 2100000, guid: cc890050806fc6e4fa428df87bc1a06e, type: 2}
   - {fileID: 2100000, guid: 1ac55cdc890750447bd80db775a81e8c, type: 2}
   - {fileID: 2100000, guid: b0babf971c44cc64889117fbc3a131fc, type: 2}
   - {fileID: 2100000, guid: c4baa34a1f3b7414a82642f024b3630b, type: 2}
   - {fileID: 2100000, guid: a52b2352c3dd6d64bb283fd07fdc3d8a, type: 2}
-  warningLine: {fileID: 583035866}
-  warningMaterial: {fileID: 2100000, guid: e1c7b2163ffb45443a0ff8d0dcc2b68a, type: 2}
-  _player: {fileID: 93897632}
-  shot: {fileID: 7394157201635814374, guid: ca9215b3ce5e4b5469204311b7c9a095, type: 3}
-  shotSpawn: {fileID: 910750496}
-  speed: 9
-  xMin: -8.2
-  xMax: 8.2
-  zMin: -1
-  zMax: 3
-  tilt: -3.5
-  fireRate: 0.25
-  gameCamera: {fileID: 963194227}
+  _playerRenderer: {fileID: 988299814}
   _joystickSize: {x: 300, y: 300}
   _joystick: {fileID: 618140936}
 --- !u!1 &149508863
@@ -2125,6 +2125,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 93897638}
   m_SourcePrefab: {fileID: 100100000, guid: d9808401c68af274a8edfbed3d1b53c7, type: 3}
+--- !u!23 &988299814 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2300000, guid: d9808401c68af274a8edfbed3d1b53c7, type: 3}
+  m_PrefabInstance: {fileID: 988299813}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1040349103
 GameObject:
   m_ObjectHideFlags: 0
@@ -2857,6 +2862,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3ce38b099fb7fc428ef011511252bfd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _restartButton: {fileID: 1480722389}
+  _menuButton: {fileID: 2082341645}
+  _gameOverText: {fileID: 378598189}
   _scoreAnimation:
   - {fileID: 149508866}
   - {fileID: 564765853}
@@ -2865,24 +2873,21 @@ MonoBehaviour:
   - {fileID: 397882835}
   - {fileID: 2138201783}
   - {fileID: 1339295494}
+  _fullHeartSprite: {fileID: 21300000, guid: 4be2bceb6e8c99343858cc8ecc96a14f, type: 3}
+  _emptyHeartSprite: {fileID: 21300002, guid: 4be2bceb6e8c99343858cc8ecc96a14f, type: 3}
+  _scoreText: {fileID: 1847982984}
+  _bestScoreText: {fileID: 564765851}
+  _newScoreInfoText: {fileID: 948846716}
   _pauseStartSprite:
   - {fileID: 21300000, guid: 6cad172dc9950914a9a894ace40580a7, type: 3}
   - {fileID: 21300000, guid: bee11f7b5212ac146919707950ca734a, type: 3}
-  _fullHeartSprite: {fileID: 21300000, guid: 4be2bceb6e8c99343858cc8ecc96a14f, type: 3}
-  _emptyHeartSprite: {fileID: 21300002, guid: 4be2bceb6e8c99343858cc8ecc96a14f, type: 3}
-  _pauseButtonImage: {fileID: 75753888}
-  _hazard: {fileID: 8629296832766000323, guid: 74b2fa4275345f749ba67357f4064c0f, type: 3}
-  _restartButton: {fileID: 1480722389}
-  _menuButton: {fileID: 2082341645}
-  _pausePanel: {fileID: 1740526662}
-  _scoreText: {fileID: 1847982984}
-  _bestScoreText: {fileID: 564765851}
-  _gameOverText: {fileID: 378598189}
-  _newScoreInfoText: {fileID: 948846716}
-  _volumeText: {fileID: 1239749382}
   _playerController: {fileID: 93897638}
   _volumeSlider: {fileID: 1659289465}
   _pauseButton: {fileID: 75753887}
+  _volumeText: {fileID: 1239749382}
+  _pausePanel: {fileID: 1740526662}
+  _pauseButtonImage: {fileID: 75753888}
+  _hazard: {fileID: 8629296832766000323, guid: 74b2fa4275345f749ba67357f4064c0f, type: 3}
   _hazardsPerWave: 10
   _spawnWaitTime: 2
   _startWaitTime: 2
