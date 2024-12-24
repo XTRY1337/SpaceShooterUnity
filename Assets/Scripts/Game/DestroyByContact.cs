@@ -10,6 +10,7 @@ public class DestroyByContact : MonoBehaviour
     [SerializeField] private float _blinkTime;
 
     private GameManager _gameController;
+    private Transform _childTransform;
 
     private bool _tutorial;
     private float _gameSpeed;
@@ -26,6 +27,8 @@ public class DestroyByContact : MonoBehaviour
 
         GameObject gameControllerObject = GameObject.FindWithTag("GameController");
         _gameController = gameControllerObject.GetComponent<GameManager>();
+
+        _childTransform = transform.Find("prop_asteroid_01");
     }
 
     void OnTriggerEnter(Collider other)
@@ -65,7 +68,7 @@ public class DestroyByContact : MonoBehaviour
             _gameController.AddScore();
         }
 
-        Instantiate(_explosion, transform.position, transform.rotation);
+        Instantiate(_explosion, _childTransform.position, transform.rotation);
 
         Destroy(other.gameObject);
         Destroy(gameObject);
