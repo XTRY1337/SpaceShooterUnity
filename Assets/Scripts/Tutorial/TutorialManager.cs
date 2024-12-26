@@ -3,34 +3,62 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+using TMPro;
+
 public class TutorialManager : MonoBehaviour
 {
+    [SerializeField] private TextMeshProUGUI _finishTutorialMsg;
+    [SerializeField] private Animation _finishTutorialMsgAnimation;
     [SerializeField] private GameObject _moveKeysAnimator; 
     [SerializeField] private GameObject _mouseClickAnimator; 
     [SerializeField] private GameObject _closeButton;
     [SerializeField] private GameObject _leftPanelAndroid;
     [SerializeField] private GameObject _rightPanelAndroid;
     [SerializeField] private GameObject _hazard;
+    [SerializeField] private GameObject _handleObjective;
 
+    [SerializeField] private float _spawnXMin;
+    [SerializeField] private float _spawnXMax;
+    [SerializeField] private float _spawmZ;
+    [SerializeField] private float _spawnWaitTime;
+
+    private static Animation _localObjectiveAnimation;
     private bool _leftPanelClicked;
     private bool _rightPanelClicked;
-    private static bool _stageMovePlayer;
-    private static bool _stageFire;
+    private static bool _isStageMovePlayer;
+    private static bool _isStageFire;
+    private bool _isWindows;
+    private static int _asteroidObjectiveCounter;
+    private static bool _isWaveTutorialController;
 
-    public static bool StageMovePlayer => _stageMovePlayer;
-    public static bool StageFire => _stageFire;
+    public static TextMeshProUGUI _objectiveValue;
+    public static bool IsWaveTutorialController => _isWaveTutorialController;
+    public static bool IsStageMovePlayer => _isStageMovePlayer;
+    public static bool IsStageFire => _isStageFire;
 
     void Start()
-    {
+    {   
         _leftPanelClicked = false;
         _rightPanelClicked = false;
-        _stageMovePlayer = false;
-        _stageFire = false;
+        _isStageMovePlayer = false;
+        _isStageFire = false;
+        _isWaveTutorialController = false;
+        _isWindows = Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor;
+        _asteroidObjectiveCounter = 0;
+
+        GameObject objectiveText = GameObject.FindWithTag("Objective");
+        _objectiveValue = objectiveText.GetComponent<TextMeshProUGUI>();
+
+        GameObject objectiveArea = GameObject.FindWithTag("ObjectiveArea");
+        _localObjectiveAnimation = objectiveArea.GetComponent<Animation>();
+
+        _handleObjective.SetActive(false);
+        _finishTutorialMsg.gameObject.SetActive(false);
 
         BackgroundMovement.MovementOption = 2;
 
         AudioManager.Instance.SetNewMusic(1);
-        
+
         _closeButton.SetActive(false);
 
         if(!SessionManager.GetFirstPlay())
@@ -40,21 +68,27 @@ public class TutorialManager : MonoBehaviour
 
         SessionManager.SetFirstPlay(true);
 
-        StartCoroutine(StartTutorial());
+        StartCoroutine(ExecuteTutorialWithWaves());
+    }
+
+    IEnumerator ExecuteTutorialWithWaves()
+    {
+        yield return StartCoroutine(StartTutorial());
+        yield return StartCoroutine(SpawnTutorialWaves());
     }
 
     IEnumerator StartTutorial()
-    {
+    {   
         yield return new WaitForSeconds(1.5f);
 
         //after 1.5 second
         Time.timeScale = 0;
 
-        if(Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
+        if(_isWindows)
         {   
             _moveKeysAnimator.SetActive(true);
 
-            while(!_stageMovePlayer) //While key not pressed
+            while(!_isStageMovePlayer) //While key not pressed
             {
                 if (Input.anyKeyDown)
                 {
@@ -62,7 +96,7 @@ public class TutorialManager : MonoBehaviour
                     {
                         if (Input.GetKeyDown(key))
                         {
-                            _stageMovePlayer = true;
+                            _isStageMovePlayer = true;
                             _moveKeysAnimator.SetActive(false);
 
                             Time.timeScale = 1;
@@ -90,11 +124,11 @@ public class TutorialManager : MonoBehaviour
 
             _mouseClickAnimator.SetActive(true);
 
-            while(!_stageFire)
+            while(!_isStageFire)
             {
                 if (Input.GetKeyDown(KeyCode.Mouse0))
                 {
-                    _stageFire = true;
+                    _isStageFire = true;
                     _mouseClickAnimator.SetActive(false);
 
                     Time.timeScale = 1;
@@ -104,19 +138,11 @@ public class TutorialManager : MonoBehaviour
                 
                 yield return null;
             }
-
-            yield return new WaitForSeconds(3f);
-
-            spawnPosition = VectorManager.NewVector3(3, 0, 17);
-            Instantiate(_hazard, spawnPosition, spawnRotation);
-
-            //TODO: handle text animation saying, try again or good joob, until player destroy at least 2 consecutive asteroides
-                //Aparecer um texto a dizer objectivo: 0/2(se sair fora do mapa o asteroid sem ser destruido nao fazer nada)
         }
-        else if(Application.platform == RuntimePlatform.Android)
+        else
         {
             _leftPanelAndroid.SetActive(true);
-            _stageMovePlayer = true;
+            _isStageMovePlayer = true;
 
             while(!_leftPanelClicked)
             {
@@ -141,18 +167,58 @@ public class TutorialManager : MonoBehaviour
                 yield return null;
             }
 
-            _stageFire = true;
-
-            yield return new WaitForSeconds(3f);
-
-            spawnPosition = VectorManager.NewVector3(3, 0, 17);
-            Instantiate(_hazard, spawnPosition, spawnRotation);
+            _isStageFire = true;
         }
 
-        yield return new WaitForSeconds(4);
+        yield return new WaitForSeconds(3f);
+
+        _handleObjective.SetActive(true);
+        _localObjectiveAnimation.Play("ShowText");
+
+        yield return new WaitForSeconds(1f);
+    }
+
+    IEnumerator SpawnTutorialWaves()
+    {
+        _isWaveTutorialController = true;
+
+        while(true)
+        {   
+            if (_asteroidObjectiveCounter >= 3)
+            {
+                break;
+            }
+
+            Vector3 spawnPosition = VectorManager.NewVector3(Random.Range(_spawnXMin, _spawnXMax), 0, _spawmZ);
+            Quaternion spawnRotation = Quaternion.identity;
+            Instantiate(_hazard, spawnPosition, spawnRotation);
+
+            yield return new WaitForSeconds(_spawnWaitTime);
+        }
+        
+        _isWaveTutorialController = false;
+
+        _finishTutorialMsg.gameObject.SetActive(true);
+        _finishTutorialMsgAnimation.Play("FinishTutorial");
+
+        yield return new WaitForSeconds(2f);
 
         SessionManager.SetFirstPlay(false);
         SceneManager.LoadScene(2);
+    }
+
+    public static void SetNewAsteroidCounter()
+    {
+        _localObjectiveAnimation.Play("TutorialObjective");
+        _asteroidObjectiveCounter++;
+        _objectiveValue.text = $"{_asteroidObjectiveCounter} / 3";
+    }
+
+    public static void ResetAsteroidCounter()
+    {
+        _localObjectiveAnimation.Play("TutorialObjectiveFail");
+        _asteroidObjectiveCounter = 0;
+        _objectiveValue.text = $"{_asteroidObjectiveCounter} / 3";
     }
 
     public void OnLeftPainelClick()

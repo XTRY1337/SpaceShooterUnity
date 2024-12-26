@@ -20,6 +20,8 @@ public class DestroyByContact : MonoBehaviour
         _tutorial = SessionManager.GetFirstPlay();
         _gameSpeed = SessionManager.GetGameSpeed();
 
+        _childTransform = transform.Find("prop_asteroid_01");
+
         if(_tutorial)
         {
             return;
@@ -27,8 +29,6 @@ public class DestroyByContact : MonoBehaviour
 
         GameObject gameControllerObject = GameObject.FindWithTag("GameController");
         _gameController = gameControllerObject.GetComponent<GameManager>();
-
-        _childTransform = transform.Find("prop_asteroid_01");
     }
 
     void OnTriggerEnter(Collider other)
@@ -42,9 +42,17 @@ public class DestroyByContact : MonoBehaviour
         {   
             if(other.tag == "Player")
             {
-                CoroutineManager.Instance.StartCoroutine(BlinkEffect());                
+                CoroutineManager.Instance.StartCoroutine(BlinkEffect());
+                TutorialManager.ResetAsteroidCounter();             
             }
 
+            if(TutorialManager.IsWaveTutorialController && other.tag != "Player")
+            {
+                TutorialManager.SetNewAsteroidCounter();  
+            }
+
+            AudioManager.Instance.PlaySoundEffect("ExplosionAsteroid");
+            Instantiate(_explosion, _childTransform.position, transform.rotation);
             Destroy(gameObject);
 
             return;
@@ -56,10 +64,12 @@ public class DestroyByContact : MonoBehaviour
             if(!gameOver)
             {
                 CoroutineManager.Instance.StartCoroutine(BlinkEffect());
+                AudioManager.Instance.PlaySoundEffect("ExplosionAsteroid");
                 Destroy(gameObject);
                 return;
             }
 
+            AudioManager.Instance.PlaySoundEffect("ExplosionPlayer");
             Instantiate(_playerExplosion, other.transform.position, other.transform.rotation);
         }
 
@@ -68,6 +78,7 @@ public class DestroyByContact : MonoBehaviour
             _gameController.AddScore();
         }
 
+        AudioManager.Instance.PlaySoundEffect("ExplosionAsteroid");
         Instantiate(_explosion, _childTransform.position, transform.rotation);
 
         Destroy(other.gameObject);

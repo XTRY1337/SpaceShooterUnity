@@ -360,6 +360,8 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 7b04c59dd84f14039b601e1abbe7b884, type: 3}
   _effectsClips:
   - {fileID: 8300000, guid: bf75b984df8a84987bcf3a8bf6e2862d, type: 3}
+  - {fileID: 8300000, guid: 3dc7455402dfa462b89a4bbd513955e9, type: 3}
+  - {fileID: 8300000, guid: a019ae3af8e864616b85773c509f5285, type: 3}
 --- !u!82 &474125851
 AudioSource:
   m_ObjectHideFlags: 0

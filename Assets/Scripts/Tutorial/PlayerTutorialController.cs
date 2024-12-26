@@ -31,17 +31,26 @@ public class PlayerTutorialController : MonoBehaviour
 
     void Update()
     {   
-        if(!TutorialManager.StageMovePlayer && !TutorialManager.StageFire)
+        if(!TutorialManager.IsStageMovePlayer && !TutorialManager.IsStageFire)
         {
             return;
         }
+
+        //Player zone limit
+        _player.position = VectorManager.NewVector3(
+            x: Math.Clamp(_player.position.x, _xMin, _xMax), 
+            z: Math.Clamp(_player.position.z, _zMin, _zMax)
+        );
+
+        //Player rotation
+        _player.rotation = Quaternion.Euler(0, 0, _player.linearVelocity.x * _tilt);
 
         //Player movement
         if(Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
         {   
             MovePlayer(VectorManager.NewVector3(x: GetHorizontalMove, z: GetVerticalMove));
 
-            if(!TutorialManager.StageFire)
+            if(!TutorialManager.IsStageFire)
             {
                 return;
             }
@@ -64,7 +73,7 @@ public class PlayerTutorialController : MonoBehaviour
                     if(t.position.x > Screen.width / 2 && !IsTouchOverUI(t.fingerId))
                     {
                         //Click on right side of screen
-                        if(!TutorialManager.StageFire)
+                        if(!TutorialManager.IsStageFire)
                         {
                             return;
                         }
@@ -94,15 +103,6 @@ public class PlayerTutorialController : MonoBehaviour
                 i++;
             }
         }
-
-        //Player zone limit
-        _player.position = VectorManager.NewVector3(
-            x: Math.Clamp(_player.position.x, _xMin, _xMax), 
-            z: Math.Clamp(_player.position.z, _zMin, _zMax)
-        );
-
-        //Player rotation
-        _player.rotation = Quaternion.Euler(0, 0, _player.linearVelocity.x * _tilt);
     }
 
     private void MovePlayer(Vector3 direction)
@@ -140,7 +140,7 @@ public class PlayerTutorialController : MonoBehaviour
 
     private bool IsTouchOverUI(int fingerId)
     {
-        if(!TutorialManager.StageFire)
+        if(!TutorialManager.IsStageFire)
         {
             return false;
         }

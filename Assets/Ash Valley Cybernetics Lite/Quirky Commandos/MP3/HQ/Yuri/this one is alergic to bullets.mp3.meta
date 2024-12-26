@@ -1,0 +1,30 @@
+fileFormatVersion: 2
+guid: f9f6b3db121f04a57bb8f02bbd254aa5
+timeCreated: 1514920933
+licenseType: Store
+AudioImporter:
+  serializedVersion: 6
+  defaultSettings:
+    loadType: 0
+    sampleRateSetting: 0
+    sampleRateOverride: 44100
+    compressionFormat: 1
+    quality: 1
+    conversionMode: 0
+  platformSettingOverrides: {}
+  forceToMono: 0
+  normalize: 1
+  preloadAudioData: 1
+  loadInBackground: 0
+  3D: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 108327
+  packageName: Ash Valley Cybernetics LITE
+  packageVersion: 1.0
+  assetPath: Assets/Ash Valley Cybernetics Lite/Quirky Commandos/MP3/HQ/Yuri/this
+    one is alergic to bullets.mp3
+  uploadId: 221849

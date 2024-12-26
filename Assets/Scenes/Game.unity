@@ -2891,8 +2891,8 @@ MonoBehaviour:
   _hazardsPerWave: 10
   _spawnWaitTime: 2
   _startWaitTime: 2
-  _spawnXMin: -8
-  _spawnXMax: 8
+  _spawnXMin: -8.2
+  _spawnXMax: 8.2
   _spawmZ: 16
 --- !u!224 &1340234721
 RectTransform:

@@ -8,6 +8,8 @@ TagManager:
   - Fire
   - Joystick
   - IgnoreTouch
+  - Objective
+  - ObjectiveArea
   layers:
   - Default
   - TransparentFX
