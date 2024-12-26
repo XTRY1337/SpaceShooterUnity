@@ -21,7 +21,7 @@ public class BackgroundMovement : MonoBehaviour
         _backgroundMaterial = GetComponent<Renderer>().material;
         _backgroundRealistic = SessionManager.GetRealistic();
         _gameSpeed = SessionManager.GetGameSpeed();
-        _platformMultiplier = (Application.platform == RuntimePlatform.Android) ? 3f : 1f;
+        _platformMultiplier = GameIntroduction.IsWindows ? 3f : 1f;
         _horizontalAdjustment = 0.0001f * _gameSpeed;
         _verticalAdjustment = 0.00015f * _gameSpeed;
     }
@@ -40,12 +40,12 @@ public class BackgroundMovement : MonoBehaviour
                         float playerHorizontalMovement = 0;
                         float playerVerticalMovement = 0;
 
-                        if(Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
+                        if(GameIntroduction.IsWindows)
                         {
                             playerHorizontalMovement = PlayerController.GetHorizontalMove;
                             playerVerticalMovement = PlayerController.GetVerticalMove;
                         }
-                        else if(Application.platform == RuntimePlatform.Android)
+                        else
                         {
                             playerHorizontalMovement = PlayerController.MobileMovement.x;
                             playerVerticalMovement = PlayerController.MobileMovement.z;

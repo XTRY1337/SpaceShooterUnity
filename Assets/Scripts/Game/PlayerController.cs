@@ -16,7 +16,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _xMin, _xMax, _zMin, _zMax;
     [SerializeField] private float _tilt;
     [SerializeField] private float _fireRate;
-    private bool _isWindows;
     private int _screenWidth;
 
     [Header("-- Limit line --")]
@@ -54,14 +53,13 @@ public class PlayerController : MonoBehaviour
         _movePlayerOption = SessionManager.GetPlayerMovementControlOption();
         _joystickFlag = SessionManager.GetJoystick();
         _fireKey = SessionManager.GetFireKey();
-        _isWindows = Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor;
         _screenWidth = Screen.width;
     }
 
     void Update()
     {   
         //Player movement
-        if(_isWindows)
+        if(GameIntroduction.IsWindows)
         {   
             Vector3 playerMovement = VectorManager.NewVector3(x: GetHorizontalMove, z: GetVerticalMove);
             MovePlayer(playerMovement);
@@ -229,8 +227,8 @@ public class PlayerController : MonoBehaviour
         if (IsTouchOverUI(touchedFinger.index))
             return;
 
-        if(_joystickFlag && _movementFinger is not null && !GameManager.IsGamePaused)
-        {
+        if(_joystickFlag && _movementFinger is null && !GameManager.IsGamePaused)
+        {   
             switch(_movePlayerOption)
             {
                 case 0:

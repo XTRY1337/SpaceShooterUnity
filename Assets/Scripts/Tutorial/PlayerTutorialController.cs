@@ -46,7 +46,7 @@ public class PlayerTutorialController : MonoBehaviour
         _player.rotation = Quaternion.Euler(0, 0, _player.linearVelocity.x * _tilt);
 
         //Player movement
-        if(Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
+        if(GameIntroduction.IsWindows)
         {   
             MovePlayer(VectorManager.NewVector3(x: GetHorizontalMove, z: GetVerticalMove));
 
@@ -60,7 +60,7 @@ public class PlayerTutorialController : MonoBehaviour
                 Shoot();
             }
         }
-        else if(Application.platform == RuntimePlatform.Android)
+        else
         {   
             int i = 0;
             while(i < Input.touchCount)

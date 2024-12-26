@@ -27,7 +27,6 @@ public class TutorialManager : MonoBehaviour
     private bool _rightPanelClicked;
     private static bool _isStageMovePlayer;
     private static bool _isStageFire;
-    private bool _isWindows;
     private static int _asteroidObjectiveCounter;
     private static bool _isWaveTutorialController;
 
@@ -43,7 +42,6 @@ public class TutorialManager : MonoBehaviour
         _isStageMovePlayer = false;
         _isStageFire = false;
         _isWaveTutorialController = false;
-        _isWindows = Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor;
         _asteroidObjectiveCounter = 0;
 
         GameObject objectiveText = GameObject.FindWithTag("Objective");
@@ -84,7 +82,7 @@ public class TutorialManager : MonoBehaviour
         //after 1.5 second
         Time.timeScale = 0;
 
-        if(_isWindows)
+        if(GameIntroduction.IsWindows)
         {   
             _moveKeysAnimator.SetActive(true);
 

@@ -10,9 +10,11 @@ public class GameIntroduction : MonoBehaviour
 
     private static HashSet<KeyCode> _invalidRemappingKeys;
     private static HashSet<KeyCode> _tutorialAvailableKeys;
+    private static bool _isWindows;
 
     public static HashSet<KeyCode> InvalidRemappingKeys => _invalidRemappingKeys;
     public static HashSet<KeyCode> TutorialAvailableKeys => _tutorialAvailableKeys;
+    public static bool IsWindows => _isWindows;
 
     void Start()
     {
@@ -34,5 +36,7 @@ public class GameIntroduction : MonoBehaviour
             KeyCode.W, KeyCode.A, KeyCode.S, KeyCode.D,
             KeyCode.UpArrow, KeyCode.DownArrow, KeyCode.LeftArrow, KeyCode.RightArrow
         };
+
+        _isWindows = Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor;
     }
 }

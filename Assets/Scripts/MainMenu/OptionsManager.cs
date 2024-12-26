@@ -82,11 +82,11 @@ public class OptionsManager : MonoBehaviour
         _shipSettingsPanel.SetActive(true);
         _generalControlsSettingsPanel.SetActive(true);
 
-        if(Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
+        if(GameIntroduction.IsWindows)
         {   
             _controlsSettingsPCPanel.SetActive(true);
         }
-        else if(Application.platform == RuntimePlatform.Android)
+        else
         {
             _controlsSettingsAndroidPanel.SetActive(true);
 
@@ -144,11 +144,11 @@ public class OptionsManager : MonoBehaviour
         _shipSettingsPanel.SetActive(false);
         _generalControlsSettingsPanel.SetActive(false);
 
-        if(Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
+        if(GameIntroduction.IsWindows)
         {   
             _controlsSettingsPCPanel.SetActive(false);
         }
-        else if(Application.platform == RuntimePlatform.Android)
+        else
         {
             _controlsSettingsAndroidPanel.SetActive(false);
         }
@@ -227,11 +227,11 @@ public class OptionsManager : MonoBehaviour
 
         TabsController();
 
-        if(Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
+        if(GameIntroduction.IsWindows)
         {   
             _controlsSettingsPCPanel.SetActive(false);
         }
-        else if(Application.platform == RuntimePlatform.Android)
+        else
         {
             _controlsSettingsAndroidPanel.SetActive(false);
         }
@@ -295,11 +295,11 @@ public class OptionsManager : MonoBehaviour
 
         TabsController();
 
-        if(Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
+        if(GameIntroduction.IsWindows)
         {   
             _controlsSettingsPCPanel.SetActive(false);
         }
-        else if(Application.platform == RuntimePlatform.Android)
+        else
         {
             _controlsSettingsAndroidPanel.SetActive(false);
         }
@@ -316,11 +316,11 @@ public class OptionsManager : MonoBehaviour
 
         _currentTab = 2;   
 
-        if(Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
+        if(GameIntroduction.IsWindows)
         {   
             _controlsSettingsPCPanel.SetActive(true);
         }
-        else if(Application.platform == RuntimePlatform.Android)
+        else
         {
             _controlsSettingsAndroidPanel.SetActive(true);
         }
