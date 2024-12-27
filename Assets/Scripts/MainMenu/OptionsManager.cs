@@ -44,10 +44,17 @@ public class OptionsManager : MonoBehaviour
     [SerializeField] private Image _controlsSettingsButtonImage;
     [SerializeField] private RectTransform _controlsSettingsTransform;
 
-    private RectTransform[] _tabsButtonTransforms = new RectTransform[3];
-    private RectTransform[] _tabsButtonTexts = new RectTransform[3];
-    private Image[] _tabsButtonImages = new Image[3];
-    private GameObject[] _tabsPanels = new GameObject[3];
+    [Header("-- Graphics Settings --")]
+    [SerializeField] private TMP_Dropdown _graphicsLevelDropdown; 
+    [SerializeField] private GameObject _graphicsSettingsPanel;
+    [SerializeField] private RectTransform _graphicsSettingsButtonText;
+    [SerializeField] private Image _graphicsSettingsButtonImage;
+    [SerializeField] private RectTransform _graphicsSettingsTransform;
+
+    private RectTransform[] _tabsButtonTransforms = new RectTransform[4];
+    private RectTransform[] _tabsButtonTexts = new RectTransform[4];
+    private Image[] _tabsButtonImages = new Image[4];
+    private GameObject[] _tabsPanels = new GameObject[4];
 
     private float _defaultSize = 116.6f;
     private float _defaultOffset = 35f;
@@ -70,10 +77,10 @@ public class OptionsManager : MonoBehaviour
         float gameSpeed = SessionManager.GetGameSpeed();
         float volume = SessionManager.GetVolume();
 
-        _tabsButtonTransforms = new RectTransform[] { _gameSettingsButtonTransform, _shipSettingsButtonTransform, _controlsSettingsTransform };
-        _tabsButtonTexts = new RectTransform[] { _gameSettingsButtonText, _shipSettingsButtonText, _controlsSettingsButtonText };
-        _tabsButtonImages = new Image[] { _gameSettingsButtonImage, _shipSettingsButtonImage, _controlsSettingsButtonImage };
-        _tabsPanels = new GameObject[] { _gameSettingsPanel, _shipSettingsPanel, _generalControlsSettingsPanel };
+        _tabsButtonTransforms = new RectTransform[] { _gameSettingsButtonTransform, _shipSettingsButtonTransform, _controlsSettingsTransform, _graphicsSettingsTransform };
+        _tabsButtonTexts = new RectTransform[] { _gameSettingsButtonText, _shipSettingsButtonText, _controlsSettingsButtonText, _graphicsSettingsButtonText };
+        _tabsButtonImages = new Image[] { _gameSettingsButtonImage, _shipSettingsButtonImage, _controlsSettingsButtonImage, _graphicsSettingsButtonImage };
+        _tabsPanels = new GameObject[] { _gameSettingsPanel, _shipSettingsPanel, _generalControlsSettingsPanel, _graphicsSettingsPanel };
 
         _resetSettingsPanel.SetActive(false);
 
@@ -81,6 +88,7 @@ public class OptionsManager : MonoBehaviour
         _gameSettingsPanel.SetActive(true); 
         _shipSettingsPanel.SetActive(true);
         _generalControlsSettingsPanel.SetActive(true);
+        _graphicsSettingsPanel.SetActive(true);
 
         if(GameIntroduction.IsWindows)
         {   
@@ -99,6 +107,9 @@ public class OptionsManager : MonoBehaviour
                 SessionManager.SetJoystick(state);
             });
         }
+
+        _graphicsLevelDropdown.value = SessionManager.GetGraphics();
+        _graphicsLevelDropdown.onValueChanged.AddListener(OnGraphicsDropdownValueChanged);
 
         _gameSpeedSlider.value = gameSpeed;
         _gameSpeedText.text = $"{gameSpeed}x";
@@ -143,6 +154,7 @@ public class OptionsManager : MonoBehaviour
         _gameSettingsPanel.SetActive(true);
         _shipSettingsPanel.SetActive(false);
         _generalControlsSettingsPanel.SetActive(false);
+        _graphicsSettingsPanel.SetActive(false);
 
         if(GameIntroduction.IsWindows)
         {   
@@ -163,6 +175,15 @@ public class OptionsManager : MonoBehaviour
         _controlsSideDropdown.value = 0;
         _joystickToggle.isOn = false;
         _currentKeyText.text = KeyCode.Mouse0.ToString();
+
+        if(GameIntroduction.IsWindows)
+        {
+            _graphicsLevelDropdown.value = 5; //Ultra
+        }
+        else
+        {
+            _graphicsLevelDropdown.value = 2; //Medium
+        }
         
         _gameSpeedText.text = $"{Constants.DefaulGameSpeed}x";
         _gameSpeedSlider.value = Constants.DefaulGameSpeed;
@@ -179,6 +200,7 @@ public class OptionsManager : MonoBehaviour
         SessionManager.SetDefaultPlayerMovementControlOption();
         SessionManager.SetDefaultJoystick();
         SessionManager.SetDefaultFireKey();
+        SessionManager.SetDefaultGraphics();
 
         _resetSettingsPanel.SetActive(false);
     }
@@ -330,15 +352,7 @@ public class OptionsManager : MonoBehaviour
 
     private void OnDropdownValueChanged(int value)
     {
-        switch (value)
-        {
-            case 0:
-                SessionManager.SetPlayerMovementControlOption(0);
-                break;
-            case 1:
-                SessionManager.SetPlayerMovementControlOption(1);
-                break;
-        }
+        SessionManager.SetPlayerMovementControlOption(value);
     }
 
     public void OnNewKeyButton()
@@ -376,6 +390,30 @@ public class OptionsManager : MonoBehaviour
 
             yield return null;
         }
+    }
+    #endregion
+
+    #region GraphicsSettings
+    public void OnGraphicsSettingsButton()
+    {
+        if(_currentTab == 3)
+        {
+            return;
+        }
+
+        _currentTab = 3;   
+
+        _graphicsSettingsPanel.SetActive(true);
+        
+        TabsController();
+    }
+
+    private void OnGraphicsDropdownValueChanged(int value)
+    {
+        Debug.Log(value);
+        SessionManager.SetGraphics(value);
+        QualitySettings.SetQualityLevel(value);
+        PlayerPrefs.SetInt("QualityLevel", value);
     }
     #endregion
 }

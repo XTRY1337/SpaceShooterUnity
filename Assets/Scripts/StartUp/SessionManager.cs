@@ -7,20 +7,26 @@ using Newtonsoft.Json;
 public class SessionManager : MonoBehaviour
 {
     private static string _sessionFilePath;
+    private static bool _isWindows;
 
     void Start()
     {
         _sessionFilePath = Path.Combine(Application.persistentDataPath, Constants.SessionFileName);
 
         if (!File.Exists(_sessionFilePath))
-        {
+        {   
+            _isWindows = Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor;
             CreateDefaulSession();
         }
+
+        int graphicsLevel = GetGraphics();
+        QualitySettings.SetQualityLevel(graphicsLevel);
+        PlayerPrefs.SetInt("QualityLevel", graphicsLevel);
     }
 
     #region JsonFile
     private void CreateDefaulSession()
-    {
+    {   
         SpaceShooterData defaultData = new SpaceShooterData
         {
             gameSpeed = Constants.DefaulGameSpeed,
@@ -32,7 +38,8 @@ public class SessionManager : MonoBehaviour
             fireKey = KeyCode.Mouse0,
             limitLine = false,
             playerMovementOption = 0,
-            joystick = false
+            joystick = false,
+            graphicsIndex = _isWindows ? 5 : 2
         };
 
         string json = JsonConvert.SerializeObject(defaultData);
@@ -261,7 +268,6 @@ public class SessionManager : MonoBehaviour
         jsonObject.playerMovementOption = 0;
         SerializeObject(jsonObject);
     }
-    
     #endregion
 
     #region JoyStick
@@ -318,6 +324,42 @@ public class SessionManager : MonoBehaviour
     }
     #endregion
 
+    #region Graphics
+    public static int GetGraphics()
+    {
+        var jsonObject = DeserializeObject();
+        return jsonObject.graphicsIndex;
+    }
+
+    public static void SetGraphics(int graphicsIndex)
+    {
+        var jsonObject = DeserializeObject();
+
+        if(graphicsIndex != jsonObject.graphicsIndex)
+        {
+            jsonObject.graphicsIndex = graphicsIndex;
+
+            SerializeObject(jsonObject);
+        }
+    }
+    
+    public static void SetDefaultGraphics()
+    {
+        var jsonObject = DeserializeObject();
+
+        if(GameIntroduction.IsWindows)
+        {
+            jsonObject.graphicsIndex = 5; //Ultra
+        }
+        else
+        {
+            jsonObject.graphicsIndex = 2; //Medium
+        }
+
+        SerializeObject(jsonObject);
+    }
+    #endregion
+
     [System.Serializable]
     private class SpaceShooterData
     {
@@ -331,5 +373,6 @@ public class SessionManager : MonoBehaviour
         public int playerMovementOption;
         public bool joystick;
         public KeyCode fireKey;
+        public int graphicsIndex;
     }
 }
