@@ -23,6 +23,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _scoreText;
     [SerializeField] private TextMeshProUGUI _bestScoreText;
     [SerializeField] private TextMeshProUGUI _newScoreInfoText;
+    [SerializeField] private TextMeshProUGUI _multiplierText;
 
     [Header("-- Pause Menu --")]
     [SerializeField] private List<Sprite> _pauseStartSprite = new();
@@ -57,9 +58,16 @@ public class GameManager : MonoBehaviour
     public static bool IsGameOver => _isGameOver;
     private static bool _isGameOver;
 
+    private static GameManager _instance;
+    public static GameManager Instance => _instance;
+
     void Start()
     {
+        _instance = this;
+
         BackgroundMovement.MovementOption = 1;
+
+        DestroyByContact.ResetAsteroidSequence();
 
         _score = 0;
         _playerHealth = 3;
@@ -193,8 +201,34 @@ public class GameManager : MonoBehaviour
     #region Score
     public void AddScore()
     {
-        _score += Constants.AddScore;
-        _newScoreInfoText.text = $" +{Constants.AddScore}";
+        int valueToAdd = Constants.AddScore;
+
+        if(DestroyByContact.AsteroidSequence >= 5 && DestroyByContact.AsteroidSequence < 15)
+        {
+            //x2
+            valueToAdd *= 2;
+
+            if(_multiplierText.text != "x2")
+            {
+                _multiplierText.text = "x2";
+                _scoreAnimation[3].Play("MultiplierOn");
+            }
+
+        }
+        else if(DestroyByContact.AsteroidSequence >= 15)
+        {
+            //x3
+            valueToAdd *= 3;
+
+            if(_multiplierText.text != "x3")
+            {
+                _multiplierText.text = "x3";
+                _scoreAnimation[3].Play("MultiplierOn");
+            }
+        }
+
+        _score += valueToAdd;
+        _newScoreInfoText.text = $" +{valueToAdd}";
 
         WriteScore();
         _scoreAnimation[0].Play("ScoreUpWithVanish");
@@ -206,6 +240,18 @@ public class GameManager : MonoBehaviour
             WriteBestScore();
             _scoreAnimation[1].Play("ScoreUp");
         }
+    }
+
+    public void ResetMultiplierText()
+    {
+        _scoreAnimation[3].Play("MultiplierOff");
+        StartCoroutine(ClearMultiplierTextAfterDelay(1f));
+    }
+    
+    private IEnumerator ClearMultiplierTextAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        _multiplierText.text = "";
     }
 
     private void WriteScore()
@@ -262,7 +308,7 @@ public class GameManager : MonoBehaviour
     }
 
     public void OnBackMenuButton()
-    {
+    {   
         if(Time.timeScale == 0)
         {
             Time.timeScale = 1;

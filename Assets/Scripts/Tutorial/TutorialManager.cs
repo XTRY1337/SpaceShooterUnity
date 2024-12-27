@@ -27,13 +27,15 @@ public class TutorialManager : MonoBehaviour
     private bool _rightPanelClicked;
     private static bool _isStageMovePlayer;
     private static bool _isStageFire;
-    private static int _asteroidObjectiveCounter;
     private static bool _isWaveTutorialController;
 
     public static TextMeshProUGUI _objectiveValue;
     public static bool IsWaveTutorialController => _isWaveTutorialController;
     public static bool IsStageMovePlayer => _isStageMovePlayer;
     public static bool IsStageFire => _isStageFire;
+
+    private static bool _isTutorial;
+    public static bool IsTutorial => _isTutorial;
 
     void Start()
     {   
@@ -42,7 +44,9 @@ public class TutorialManager : MonoBehaviour
         _isStageMovePlayer = false;
         _isStageFire = false;
         _isWaveTutorialController = false;
-        _asteroidObjectiveCounter = 0;
+        _isTutorial = true;
+
+        DestroyByContact.ResetAsteroidSequence();
 
         GameObject objectiveText = GameObject.FindWithTag("Objective");
         _objectiveValue = objectiveText.GetComponent<TextMeshProUGUI>();
@@ -64,7 +68,7 @@ public class TutorialManager : MonoBehaviour
             _closeButton.SetActive(true);
         }
 
-        SessionManager.SetFirstPlay(true);
+        SessionManager.SetFirstPlay(IsTutorial);
 
         StartCoroutine(ExecuteTutorialWithWaves());
     }
@@ -111,8 +115,8 @@ public class TutorialManager : MonoBehaviour
 
             yield return new WaitForSeconds(3f);
 
-            //Send asteroid
-            Vector3 spawnPosition = VectorManager.NewVector3(0, 0, 17);
+            //Send asteroid in current x player position
+            Vector3 spawnPosition = VectorManager.NewVector3(PlayerTutorialController.Instance.CurrentPlayerXPosition, 0, 16);
             Quaternion spawnRotation = Quaternion.identity;
             Instantiate(_hazard, spawnPosition, spawnRotation); 
 
@@ -182,7 +186,7 @@ public class TutorialManager : MonoBehaviour
 
         while(true)
         {   
-            if (_asteroidObjectiveCounter >= 3)
+            if (DestroyByContact.AsteroidSequence >= 3)
             {
                 break;
             }
@@ -201,22 +205,21 @@ public class TutorialManager : MonoBehaviour
 
         yield return new WaitForSeconds(2f);
 
-        SessionManager.SetFirstPlay(false);
+        _isTutorial = false;
+        SessionManager.SetFirstPlay(IsTutorial);
         SceneManager.LoadScene(2);
     }
 
-    public static void SetNewAsteroidCounter()
-    {
+    public static void AddOneToAsteroidSequence()
+    { 
         _localObjectiveAnimation.Play("TutorialObjective");
-        _asteroidObjectiveCounter++;
-        _objectiveValue.text = $"{_asteroidObjectiveCounter} / 3";
+        _objectiveValue.text = $"{DestroyByContact.AsteroidSequence} / 3";
     }
 
-    public static void ResetAsteroidCounter()
+    public static void ResetAsteroidSequence()
     {
         _localObjectiveAnimation.Play("TutorialObjectiveFail");
-        _asteroidObjectiveCounter = 0;
-        _objectiveValue.text = $"{_asteroidObjectiveCounter} / 3";
+        _objectiveValue.text = $"{DestroyByContact.AsteroidSequence} / 3";
     }
 
     public void OnLeftPainelClick()
@@ -237,7 +240,8 @@ public class TutorialManager : MonoBehaviour
     {
         Time.timeScale = 1;
 
-        SessionManager.SetFirstPlay(false);
+        _isTutorial = false;
+        SessionManager.SetFirstPlay(IsTutorial);
         SceneManager.LoadScene(2);
     }
 }

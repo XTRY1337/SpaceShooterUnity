@@ -9,11 +9,14 @@ public class PlayerTutorialController : MonoBehaviour
     [SerializeField] private Rigidbody _player;
     [SerializeField] private GameObject _shot;
     [SerializeField] private Transform _shotSpawn;
-
+    [SerializeField] private MeshRenderer _playerMeshRenderer;
+    [SerializeField] private GameObject _playerEngineFire;
     [SerializeField] private float _speed;
     [SerializeField] private float _xMin, _xMax, _zMin, _zMax;
     [SerializeField] private float _tilt;
     [SerializeField] private float _fireRate;
+    [SerializeField] private int _blinkCount;
+    [SerializeField] private float _blinkTime;
 
     private KeyCode _fireKey;
     private Vector3 _mobileOffset;
@@ -24,8 +27,15 @@ public class PlayerTutorialController : MonoBehaviour
     private float _nextFire;
     private int _leftTouch = 99; // No active touch
 
+    private static PlayerTutorialController _instance;
+    public static PlayerTutorialController Instance => _instance;
+
+    public float CurrentPlayerXPosition => _player.position.x;
+
     void Start()
     {         
+        _instance = this;
+
         _fireKey = SessionManager.GetFireKey();
     }
 
@@ -156,5 +166,27 @@ public class PlayerTutorialController : MonoBehaviour
         EventSystem.current.RaycastAll(eventData, results);
 
         return results.Count > 0;
+    }
+
+    public System.Collections.IEnumerator BlinkEffect()
+    {   
+        for (int i = 0; i < _blinkCount; i++)
+        {
+            BlinkAction(false);
+            yield return new WaitForSeconds(_blinkTime);
+            
+            BlinkAction(true);
+            yield return new WaitForSeconds(_blinkTime); 
+        }
+    }
+
+    private void BlinkAction(bool enable)
+    {   
+        try
+        {
+            _playerMeshRenderer.enabled = enable;
+            _playerEngineFire.SetActive(enable);
+        }
+        catch{} //Ignore exception
     }
 }

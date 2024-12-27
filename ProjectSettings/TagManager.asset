@@ -10,6 +10,7 @@ TagManager:
   - IgnoreTouch
   - Objective
   - ObjectiveArea
+  - Asteroid
   layers:
   - Default
   - TransparentFX

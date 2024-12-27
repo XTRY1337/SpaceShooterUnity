@@ -1,35 +1,13 @@
-using System.Collections;
 using UnityEngine;
 
 public class DestroyByContact : MonoBehaviour
 {
     [SerializeField] private GameObject _explosion;
     [SerializeField] private GameObject _playerExplosion;
-    
-    [SerializeField] private int _blinkCount;
-    [SerializeField] private float _blinkTime;
+    [SerializeField] private Transform _childTransform;
 
-    private GameManager _gameController;
-    private Transform _childTransform;
-
-    private bool _tutorial;
-    private float _gameSpeed;
-
-    void Start()
-    {   
-        _tutorial = SessionManager.GetFirstPlay();
-        _gameSpeed = SessionManager.GetGameSpeed();
-
-        _childTransform = transform.Find("prop_asteroid_01");
-
-        if(_tutorial)
-        {
-            return;
-        }
-
-        GameObject gameControllerObject = GameObject.FindWithTag("GameController");
-        _gameController = gameControllerObject.GetComponent<GameManager>();
-    }
+    public static int AsteroidSequence => _asteroidSequence;
+    private static int _asteroidSequence;
 
     void OnTriggerEnter(Collider other)
     {   
@@ -38,34 +16,37 @@ public class DestroyByContact : MonoBehaviour
             return;
         }
 
-        if(_tutorial)
+        if(TutorialManager.IsTutorial)
         {   
             if(other.tag == "Player")
             {
-                CoroutineManager.Instance.StartCoroutine(BlinkEffect());
-                TutorialManager.ResetAsteroidCounter();             
+                CoroutineManager.Instance.StartCoroutine(PlayerTutorialController.Instance.BlinkEffect());
+                ResetAsteroidSequence();
+                TutorialManager.ResetAsteroidSequence();
             }
 
             if(TutorialManager.IsWaveTutorialController && other.tag != "Player")
             {
-                TutorialManager.SetNewAsteroidCounter();  
+                _asteroidSequence++; 
+                TutorialManager.AddOneToAsteroidSequence();
             }
 
-            AudioManager.Instance.PlaySoundEffect("ExplosionAsteroid");
-            Instantiate(_explosion, _childTransform.position, transform.rotation);
-            Destroy(gameObject);
+            DestroyAsteroidObject();
 
             return;
         }
 
+        _asteroidSequence++;
+        DestroyAsteroidObject();
+
         if(other.tag == "Player")
         {   
-            bool gameOver = _gameController.HandleLifes();
+            bool gameOver = GameManager.Instance.HandleLifes();
             if(!gameOver)
             {
-                CoroutineManager.Instance.StartCoroutine(BlinkEffect());
-                AudioManager.Instance.PlaySoundEffect("ExplosionAsteroid");
-                Destroy(gameObject);
+                CoroutineManager.Instance.StartCoroutine(PlayerController.Instance.BlinkEffect());
+                ResetAsteroidSequence();
+                GameManager.Instance.ResetMultiplierText();
                 return;
             }
 
@@ -75,31 +56,18 @@ public class DestroyByContact : MonoBehaviour
 
         if(!GameManager.IsGameOver)
         {
-            _gameController.AddScore();
+            GameManager.Instance.AddScore();
         }
 
+        Destroy(other.gameObject); //Destroy shot and player
+    }
+
+    private void DestroyAsteroidObject()
+    {
         AudioManager.Instance.PlaySoundEffect("ExplosionAsteroid");
         Instantiate(_explosion, _childTransform.position, transform.rotation);
-
-        Destroy(other.gameObject);
         Destroy(gameObject);
     }
 
-    public IEnumerator BlinkEffect()
-    {   
-        GameObject player = GameObject.FindWithTag("Player");
-        MeshRenderer playerRenderer = player.GetComponent<MeshRenderer>();
-        GameObject engineFire = GameObject.FindWithTag("Fire");
-
-        for (int i = 0; i < _blinkCount; i++)
-        {
-            playerRenderer.enabled = false;
-            engineFire.SetActive(false);
-            yield return new WaitForSeconds(_blinkTime / _gameSpeed);
-            
-            playerRenderer.enabled = true;
-            engineFire.SetActive(true);
-            yield return new WaitForSeconds(_blinkTime / _gameSpeed);   
-        }
-    }
+    public static void ResetAsteroidSequence() => _asteroidSequence = 0;
 }

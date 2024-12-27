@@ -16,6 +16,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float _xMin, _xMax, _zMin, _zMax;
     [SerializeField] private float _tilt;
     [SerializeField] private float _fireRate;
+    private float _gameSpeed;
+    
     private int _screenWidth;
 
     [Header("-- Limit line --")]
@@ -33,9 +35,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Rigidbody _player;
     [SerializeField] private Material[] _playerMaterials;
     [SerializeField] private Renderer _playerRenderer;
+    [SerializeField] private MeshRenderer _playerMeshRenderer;
+    [SerializeField] private GameObject _playerEngineFire;
+    [SerializeField] private int _blinkCount;
+    [SerializeField] private float _blinkTime;
     private KeyCode _fireKey;
     private float _nextFire;
     private int _movePlayerOption;
+
     public static float GetHorizontalMove => Input.GetAxis("Horizontal");
     public static float GetVerticalMove => Input.GetAxis("Vertical");
 
@@ -46,14 +53,20 @@ public class PlayerController : MonoBehaviour
     private Vector2 _movementAmount;
     private bool _joystickFlag;
 
+    private static PlayerController _instance;
+    public static PlayerController Instance => _instance;
+
     void Start()
     {
+        _instance = this;
+
         _playerRenderer.material = _playerMaterials[SessionManager.GetSkin()];
         _limitLine = SessionManager.GetLimiteLine();       
         _movePlayerOption = SessionManager.GetPlayerMovementControlOption();
         _joystickFlag = SessionManager.GetJoystick();
         _fireKey = SessionManager.GetFireKey();
         _screenWidth = Screen.width;
+        _gameSpeed = SessionManager.GetGameSpeed();
     }
 
     void Update()
@@ -344,5 +357,27 @@ public class PlayerController : MonoBehaviour
         {
             warningLine.enabled = false;
         }
+    }
+
+    public System.Collections.IEnumerator BlinkEffect()
+    {   
+        for (int i = 0; i < _blinkCount; i++)
+        {   
+            BlinkAction(false);
+            yield return new WaitForSeconds(_blinkTime / _gameSpeed);
+            
+            BlinkAction(true);
+            yield return new WaitForSeconds(_blinkTime / _gameSpeed);   
+        }
+    }
+
+    private void BlinkAction(bool enable)
+    {   
+        try
+        {
+            _playerMeshRenderer.enabled = enable;
+            _playerEngineFire.SetActive(enable);
+        }
+        catch{} //Ignore exception
     }
 }

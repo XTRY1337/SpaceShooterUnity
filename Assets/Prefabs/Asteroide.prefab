@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 4492526478383108197}
   m_Layer: 0
   m_Name: Asteroide
-  m_TagString: Untagged
+  m_TagString: Asteroid
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -115,8 +115,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _explosion: {fileID: 100004, guid: 2857e183f4cd3df4e9096e5b578bd32f, type: 3}
   _playerExplosion: {fileID: 100004, guid: ce1af9ec03f5f4e42964ad1f0719e07a, type: 3}
-  _blinkCount: 6
-  _blinkTime: 0.1
+  _childTransform: {fileID: 9071913025354484991}
 --- !u!114 &4492526478383108197
 MonoBehaviour:
   m_ObjectHideFlags: 0
