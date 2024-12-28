@@ -110,54 +110,30 @@ public class GameManager : MonoBehaviour
         }
 
         while(!IsGameOver)
-        {
-            if(true)//_score >= 0 && _score < 150) // Level 1 / Stage 1
-            {
-                for(int i = 0; i < _hazardsPerWave; i++)
-                {
-                    if(IsGameOver)
-                    {   
-                        break;
-                    }
-
-                    //Asteroid
-                    Vector3 spawnPosition = VectorManager.NewVector3(UnityEngine.Random.Range(_spawnXMin, _spawnXMax), 0, _spawmZ);
-                    Quaternion spawnRotation = Quaternion.identity;
-                    Instantiate(_hazard, spawnPosition, spawnRotation);
-
-                    // Caso o shield não esteja ativo
-                    if (!PlayerController.IsShieldOn)
-                    {
-                        // Configura o próximo threshold se não estiver configurado ou foi resetado
-                        if (_shieldSpawnThreshold == 0)
-                        {
-                            _shieldSpawnThreshold = _score + 100; // Começa a contagem de 100 pontos a partir do score atual
-                        }
-
-                        // Verifica se atingiu ou ultrapassou o threshold
-                        if (_score >= _shieldSpawnThreshold)
-                        {
-                            // Spawna o shield
-                            Vector3 spawnShield = VectorManager.NewVector3(UnityEngine.Random.Range(_spawnXMin, _spawnXMax), 0, _spawnZUpgrade);
-                            Instantiate(_shield, spawnShield, _shield.transform.rotation);
-
-                            // Reseta o threshold para evitar múltiplos spawns
-                            _shieldSpawnThreshold = 0;
-                        }
-                    }
-                    else
-                    {
-                        // Reseta o threshold enquanto o shield está ativo
-                        _shieldSpawnThreshold = 0;
-    }
-
-                    yield return new WaitForSeconds(_spawnWaitTime / GameSpeed);
-                }
+        {   
+            if(IsGameOver)
+            {   
+                break;
             }
-            /*else if(_score >= 150 && _score < 400)
+
+            if(_score < 200) // Level 1
+            {
+                SpawnAsteroid();
+
+                SpawnShield();
+
+                yield return new WaitForSeconds(_spawnWaitTime / GameSpeed);
+            }
+            else if(_score < 500) // Level 2
             {
                 Debug.Log("Level 2");
-            }*/
+                yield return new WaitForSeconds(_spawnWaitTime / GameSpeed);
+            }
+            else if(_score < 900) // Level 3
+            {
+                Debug.Log("Level 3"); 
+                yield return new WaitForSeconds(_spawnWaitTime / GameSpeed);
+            }
         }
     }
     
@@ -211,6 +187,37 @@ public class GameManager : MonoBehaviour
     public void ChangeShieldStateUI(bool enable)
     {
         _shieldImage.enabled = enable;
+    }
+    
+    private void SpawnShield()
+    {
+        if (!PlayerController.IsShieldOn)
+        {
+            if (_shieldSpawnThreshold == 0)
+            {
+                _shieldSpawnThreshold = _score + 100;
+            }
+
+            if (_score >= _shieldSpawnThreshold)
+            {
+                // Spawna o shield
+                Vector3 spawnShield = VectorManager.NewVector3(UnityEngine.Random.Range(_spawnXMin, _spawnXMax), 0, _spawnZUpgrade);
+                Instantiate(_shield, spawnShield, _shield.transform.rotation);
+
+                _shieldSpawnThreshold = 0;
+            }
+        }
+        else
+        {
+            _shieldSpawnThreshold = 0;
+        }
+    }
+    
+    private void SpawnAsteroid()
+    {
+        Vector3 spawnPosition = VectorManager.NewVector3(UnityEngine.Random.Range(_spawnXMin, _spawnXMax), 0, _spawmZ);
+        Quaternion spawnRotation = Quaternion.identity;
+        Instantiate(_hazard, spawnPosition, spawnRotation);
     }
     #endregion
 
