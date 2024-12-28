@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject _menuButton;
     [SerializeField] private TextMeshProUGUI _gameOverText;
 
-    [Header("-- Score and Lifes --")]
+    [Header("-- Score/Lifes/Shield --")]
     [SerializeField] private List<Animation> _scoreAnimation = new(); 
     [SerializeField] private List<Image> _heartsInGame = new();
     [SerializeField] private Sprite _fullHeartSprite;
@@ -24,6 +24,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _bestScoreText;
     [SerializeField] private TextMeshProUGUI _newScoreInfoText;
     [SerializeField] private TextMeshProUGUI _multiplierText;
+    [SerializeField] private GameObject _shield;
+    [SerializeField] private Image _shieldImage;
 
     [Header("-- Pause Menu --")]
     [SerializeField] private List<Sprite> _pauseStartSprite = new();
@@ -43,11 +45,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float _spawnXMax;
     [SerializeField] private float _spawmZ;
 
+    private int _shieldSpawnThreshold = 0;
     private bool _isFirstWave;
     private int _playerHealth;
     private int _bestScore;
     private int _score;
     private int _volume;
+    private static float _spawnZUpgrade;
 
     public static float GameSpeed => _gameSpeed;
     private static float _gameSpeed = Constants.DefaulGameSpeed;
@@ -78,6 +82,7 @@ public class GameManager : MonoBehaviour
         _gameSpeed = SessionManager.GetGameSpeed();
         _volume = SessionManager.GetVolume();
         _volumeSlider.value = _volume;
+        _spawnZUpgrade = _spawmZ - 7;
         
         _gameOverText.text = "";
         _scoreText.text = "";
@@ -106,7 +111,7 @@ public class GameManager : MonoBehaviour
 
         while(!IsGameOver)
         {
-            if(true) // Level 1 / Stage 1
+            if(true)//_score >= 0 && _score < 150) // Level 1 / Stage 1
             {
                 for(int i = 0; i < _hazardsPerWave; i++)
                 {
@@ -115,16 +120,44 @@ public class GameManager : MonoBehaviour
                         break;
                     }
 
+                    //Asteroid
                     Vector3 spawnPosition = VectorManager.NewVector3(UnityEngine.Random.Range(_spawnXMin, _spawnXMax), 0, _spawmZ);
                     Quaternion spawnRotation = Quaternion.identity;
                     Instantiate(_hazard, spawnPosition, spawnRotation);
 
+                    // Caso o shield não esteja ativo
+                    if (!PlayerController.IsShieldOn)
+                    {
+                        // Configura o próximo threshold se não estiver configurado ou foi resetado
+                        if (_shieldSpawnThreshold == 0)
+                        {
+                            _shieldSpawnThreshold = _score + 100; // Começa a contagem de 100 pontos a partir do score atual
+                        }
+
+                        // Verifica se atingiu ou ultrapassou o threshold
+                        if (_score >= _shieldSpawnThreshold)
+                        {
+                            // Spawna o shield
+                            Vector3 spawnShield = VectorManager.NewVector3(UnityEngine.Random.Range(_spawnXMin, _spawnXMax), 0, _spawnZUpgrade);
+                            Instantiate(_shield, spawnShield, _shield.transform.rotation);
+
+                            // Reseta o threshold para evitar múltiplos spawns
+                            _shieldSpawnThreshold = 0;
+                        }
+                    }
+                    else
+                    {
+                        // Reseta o threshold enquanto o shield está ativo
+                        _shieldSpawnThreshold = 0;
+    }
+
                     yield return new WaitForSeconds(_spawnWaitTime / GameSpeed);
                 }
             }
-            //TODO:
-            //else if(false){} // Level x / Stage x
-            //etc
+            /*else if(_score >= 150 && _score < 400)
+            {
+                Debug.Log("Level 2");
+            }*/
         }
     }
     
@@ -173,6 +206,11 @@ public class GameManager : MonoBehaviour
         OnGameOver();
 
         return true;
+    }
+    
+    public void ChangeShieldStateUI(bool enable)
+    {
+        _shieldImage.enabled = enable;
     }
     #endregion
 

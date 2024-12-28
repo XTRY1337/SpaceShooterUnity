@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 86a04bc5e0b3bc8448538e10c9e15af7
+timeCreated: 1461294514
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 61351
+  packageName: Shield
+  packageVersion: 1.0
+  assetPath: Assets/Shield/Materials/Shield.mat
+  uploadId: 114887

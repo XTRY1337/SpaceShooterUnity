@@ -41,6 +41,12 @@ public class DestroyByContact : MonoBehaviour
 
         if(other.tag == "Player")
         {   
+            if(PlayerController.IsShieldOn)
+            {
+                PlayerController.Instance.ChangeShieldState(false);
+                return;
+            }
+
             bool gameOver = GameManager.Instance.HandleLifes();
             if(!gameOver)
             {

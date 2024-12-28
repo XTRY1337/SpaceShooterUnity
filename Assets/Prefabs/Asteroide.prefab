@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3969409888484634550}
   - component: {fileID: 2931475159412041573}
   - component: {fileID: 4492526478383108197}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Asteroide
   m_TagString: Asteroid
   m_Icon: {fileID: 0}
@@ -141,6 +141,10 @@ PrefabInstance:
     - target: {fileID: 100000, guid: baedbbad82997f445a8cb4da210404e0, type: 3}
       propertyPath: m_Name
       value: prop_asteroid_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 100000, guid: baedbbad82997f445a8cb4da210404e0, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: baedbbad82997f445a8cb4da210404e0, type: 3}
       propertyPath: m_LocalPosition.x

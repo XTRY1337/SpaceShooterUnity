@@ -37,11 +37,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Renderer _playerRenderer;
     [SerializeField] private MeshRenderer _playerMeshRenderer;
     [SerializeField] private GameObject _playerEngineFire;
+    [SerializeField] private Animator _playerShieldAnimation;
+    [SerializeField] private Behaviour _playerShieldObject;
     [SerializeField] private int _blinkCount;
     [SerializeField] private float _blinkTime;
     private KeyCode _fireKey;
     private float _nextFire;
     private int _movePlayerOption;
+    private static bool _isShieldOn;
+    public static bool IsShieldOn => _isShieldOn;
 
     public static float GetHorizontalMove => Input.GetAxis("Horizontal");
     public static float GetVerticalMove => Input.GetAxis("Vertical");
@@ -379,5 +383,13 @@ public class PlayerController : MonoBehaviour
             _playerEngineFire.SetActive(enable);
         }
         catch{} //Ignore exception
+    }
+
+    public void ChangeShieldState(bool isEnable)
+    {   
+        _isShieldOn = isEnable;
+        GameManager.Instance.ChangeShieldStateUI(isEnable);
+        _playerShieldObject.enabled = isEnable;
+        _playerShieldAnimation.enabled = isEnable;
     }
 }
