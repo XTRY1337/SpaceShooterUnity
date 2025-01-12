@@ -38,12 +38,19 @@ public class GameManager : MonoBehaviour
 
     [Header("-- Wave Parameters --")]
     [SerializeField] private GameObject _hazard;
-    [SerializeField] private int _hazardsPerWave;
+    [SerializeField] private GameObject _enemy;
+    [SerializeField] private int _levelOnePoints;
+    [SerializeField] private int _levelTwoPoints;
+    [SerializeField] private int _levelThreePoints;
     [SerializeField] private float _spawnWaitTime;
+    [SerializeField] private float _spawnWaitTimeLevelTwo;
+    [SerializeField] private float _spawnWaitTimeLevelThree;
+    [SerializeField] private float _spawnWaitTimeLevelFour;
     [SerializeField] private float _startWaitTime;
     [SerializeField] private float _spawnXMin;
     [SerializeField] private float _spawnXMax;
     [SerializeField] private float _spawmZ;
+    [SerializeField] private float _spawmZEnemy;
 
     private int _shieldSpawnThreshold = 0;
     private bool _isFirstWave;
@@ -65,6 +72,11 @@ public class GameManager : MonoBehaviour
     private static GameManager _instance;
     public static GameManager Instance => _instance;
 
+    public bool _isEnemyEnable;
+
+    public static int TotalActiveEnemies => _totalActiveEnemies;
+    private static int _totalActiveEnemies ;
+
     void Start()
     {
         _instance = this;
@@ -78,6 +90,7 @@ public class GameManager : MonoBehaviour
         _isFirstWave = true;
         _isGamePaused = false;
         _isGameOver = false;
+        _isEnemyEnable = false;
         _bestScore = SessionManager.GetHighScore();
         _gameSpeed = SessionManager.GetGameSpeed();
         _volume = SessionManager.GetVolume();
@@ -116,7 +129,7 @@ public class GameManager : MonoBehaviour
                 break;
             }
 
-            if(_score < 200) // Level 1
+            if(_score < _levelOnePoints) // Level 1  < 200pts
             {
                 SpawnAsteroid();
 
@@ -124,16 +137,44 @@ public class GameManager : MonoBehaviour
 
                 yield return new WaitForSeconds(_spawnWaitTime / GameSpeed);
             }
-            else if(_score < 500) // Level 2
+            else if(_score < _levelTwoPoints) // Level 2 < 500pts
             {
-                Debug.Log("Level 2");
-                yield return new WaitForSeconds(_spawnWaitTime / GameSpeed);
+                SpawnAsteroid();
+
+                SpawnShield();
+
+                //SpawnSecondAsteroid //TODO: take 2 shot to be destroy
+
+                StartCoroutine(SpawnEnemyWithDelay(delay: 6f));
+
+                yield return new WaitForSeconds(_spawnWaitTimeLevelTwo / GameSpeed);
             }
-            else if(_score < 900) // Level 3
+            else if(_score < _levelThreePoints) // Level 3 < 900pts
             {
-                Debug.Log("Level 3"); 
-                yield return new WaitForSeconds(_spawnWaitTime / GameSpeed);
+                SpawnAsteroid();
+
+                SpawnShield();
+
+                //SpawnSecondAsteroid //TODO: take 2 shot to be destroy
+
+                SpawnEnemy(numberOfLifes: 5, totalEnemies: 2);
+
+                yield return new WaitForSeconds(_spawnWaitTimeLevelThree / GameSpeed);
             }
+            else // >= 900
+            {
+                SpawnAsteroid();
+
+                SpawnShield();
+
+                //SpawnSecondAsteroid //TODO: take 2 shot to be destroy
+
+                SpawnEnemy(numberOfLifes: 7, totalEnemies: 3);
+
+                yield return new WaitForSeconds(_spawnWaitTimeLevelFour / GameSpeed);
+            }
+
+            yield return null;
         }
     }
     
@@ -145,7 +186,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public bool HandleLifes()
+    public bool HandleLifes(int lessScore = Constants.RemoveScore)
     {
         _playerHealth--;
 
@@ -153,13 +194,13 @@ public class GameManager : MonoBehaviour
 
         if(_playerHealth > 0)
         {
-            int saveDiference = _score - Constants.RemoveScore;
-            _score -= Constants.RemoveScore;
-            _newScoreInfoText.text = $" -{Constants.RemoveScore}";
+            int saveDiference = _score - lessScore;
+            _score -= lessScore;
+            _newScoreInfoText.text = $" -{lessScore}";
 
             if(_score < 0)
             {   
-                if(_score == -Constants.RemoveScore)
+                if(_score == -lessScore)
                 {   
                     _newScoreInfoText.text = string.Empty;          
                 }
@@ -183,7 +224,7 @@ public class GameManager : MonoBehaviour
 
         return true;
     }
-    
+
     public void ChangeShieldStateUI(bool enable)
     {
         _shieldImage.enabled = enable;
@@ -219,6 +260,46 @@ public class GameManager : MonoBehaviour
         Quaternion spawnRotation = Quaternion.identity;
         Instantiate(_hazard, spawnPosition, spawnRotation);
     }
+    
+    private void SpawnEnemy(int numberOfLifes = 3, int totalEnemies = 1)
+    {
+        if(_totalActiveEnemies <= 0)
+        {
+            _totalActiveEnemies = 0;
+            Vector3 spawnPosition = VectorManager.NewVector3(0, 0, _spawmZEnemy);
+
+            for(int i = 0; i < totalEnemies; i++)
+            {
+                InstanceEnemyWithLifes(spawnPosition, numberOfLifes);
+                _totalActiveEnemies++;
+            }
+        }
+    }
+
+    private IEnumerator SpawnEnemyWithDelay(float delay, int numberOfLifes = 3)
+    {
+        if (!_isEnemyEnable) //First if is to realy apply the delay beetween spawns!
+        {
+            yield return new WaitForSeconds(delay);
+
+            if (!_isEnemyEnable) //Second if is to avoid a duplicated spawn!
+            {
+                Vector3 spawnPosition = VectorManager.NewVector3(0, 0, _spawmZEnemy);
+                InstanceEnemyWithLifes(spawnPosition, numberOfLifes);
+                _isEnemyEnable = true;
+            }
+        }
+    }
+
+    private void InstanceEnemyWithLifes(Vector3 spawnPosition, int numberOfLifes)
+    {
+        GameObject enemy = Instantiate(_enemy, spawnPosition, _enemy.transform.rotation);
+        EnemyContact enemyContactClass = enemy.GetComponent<EnemyContact>();
+        enemyContactClass.EnemyLifes = numberOfLifes;
+    }
+
+    public void EnemyDestroyed() => _totalActiveEnemies--;
+
     #endregion
 
     #region GameController
@@ -244,10 +325,8 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Score
-    public void AddScore()
+    public void AddScore(int valueToAdd = Constants.AddScore)
     {
-        int valueToAdd = Constants.AddScore;
-
         if(DestroyByContact.AsteroidSequence >= 5 && DestroyByContact.AsteroidSequence < 15)
         {
             //x2

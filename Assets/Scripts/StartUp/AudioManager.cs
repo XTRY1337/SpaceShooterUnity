@@ -64,6 +64,12 @@ public class AudioManager : MonoBehaviour
             case "ExplosionPlayer":
                 soundIndex = 2;
                 break;
+            case "ShotEnemy":
+                soundIndex = 3;
+                break;
+            case "ExplosionEnemy":
+                soundIndex = 4;
+                break;
             default:
                 soundIndex = 0;
                 break;

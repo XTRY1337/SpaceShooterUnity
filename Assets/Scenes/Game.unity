@@ -3015,12 +3015,20 @@ MonoBehaviour:
   _pausePanel: {fileID: 1740526662}
   _pauseButtonImage: {fileID: 75753888}
   _hazard: {fileID: 8629296832766000323, guid: 74b2fa4275345f749ba67357f4064c0f, type: 3}
-  _hazardsPerWave: 10
+  _enemy: {fileID: 7497621467558896999, guid: cf97386a866a21d4bb0953f70f6d9c65, type: 3}
+  _levelOnePoints: 200
+  _levelTwoPoints: 500
+  _levelThreePoints: 900
   _spawnWaitTime: 2
+  _spawnWaitTimeLevelTwo: 1.9
+  _spawnWaitTimeLevelThree: 1.8
+  _spawnWaitTimeLevelFour: 1.6
   _startWaitTime: 2
   _spawnXMin: -8.2
   _spawnXMax: 8.2
   _spawmZ: 16
+  _spawmZEnemy: 12
+  _isEnemyEnable: 0
 --- !u!224 &1340234721
 RectTransform:
   m_ObjectHideFlags: 0

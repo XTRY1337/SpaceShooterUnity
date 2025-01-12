@@ -298,7 +298,6 @@ public class OptionsManager : MonoBehaviour
     #region ShipSettings
     public void OnSkinImageClick(int index)
     {
-        Debug.Log("sk");
         for (int j = 0; j < _shipSkinToggles.Count; j++)
         {
             _shipSkinToggles[j].isOn = false;
@@ -410,7 +409,6 @@ public class OptionsManager : MonoBehaviour
 
     private void OnGraphicsDropdownValueChanged(int value)
     {
-        Debug.Log(value);
         SessionManager.SetGraphics(value);
         QualitySettings.SetQualityLevel(value);
         PlayerPrefs.SetInt("QualityLevel", value);
