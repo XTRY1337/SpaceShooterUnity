@@ -44,7 +44,7 @@ public class EnemyContact : MonoBehaviour
 
             AudioManager.Instance.PlaySoundEffect("ExplosionEnemy");
             Instantiate(_enemyExplosion, transform.position, transform.rotation);
-            GameManager.Instance._isEnemyEnable = false;
+            CoroutineManager.Instance.StartCoroutine(GameManager.Instance.EnemyDelay(delay: 5f));
             GameManager.Instance.EnemyDestroyed();
 
             Destroy(gameObject);

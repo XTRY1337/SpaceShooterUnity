@@ -38,6 +38,7 @@ public class GameManager : MonoBehaviour
 
     [Header("-- Wave Parameters --")]
     [SerializeField] private GameObject _hazard;
+    [SerializeField] private GameObject _hazardTwo;
     [SerializeField] private GameObject _enemy;
     [SerializeField] private int _levelOnePoints;
     [SerializeField] private int _levelTwoPoints;
@@ -52,6 +53,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float _spawmZ;
     [SerializeField] private float _spawmZEnemy;
 
+    private bool _isSecondAsteroidRunning;
     private int _shieldSpawnThreshold = 0;
     private bool _isFirstWave;
     private int _playerHealth;
@@ -91,6 +93,7 @@ public class GameManager : MonoBehaviour
         _isGamePaused = false;
         _isGameOver = false;
         _isEnemyEnable = false;
+        _isSecondAsteroidRunning = false;
         _bestScore = SessionManager.GetHighScore();
         _gameSpeed = SessionManager.GetGameSpeed();
         _volume = SessionManager.GetVolume();
@@ -129,33 +132,47 @@ public class GameManager : MonoBehaviour
                 break;
             }
 
-            if(_score < _levelOnePoints) // Level 1  < 200pts
+            if(_score < _levelOnePoints) // Level 1  < 300pts
             {
                 SpawnAsteroid();
 
                 SpawnShield();
+
+                if(!_isSecondAsteroidRunning)
+                {
+                    StartCoroutine(SpawnAsteroidTwo(delay: 12f));
+                }
 
                 yield return new WaitForSeconds(_spawnWaitTime / GameSpeed);
             }
-            else if(_score < _levelTwoPoints) // Level 2 < 500pts
+            else if(_score < _levelTwoPoints) // Level 2 < 700pts
             {
                 SpawnAsteroid();
 
                 SpawnShield();
 
-                //SpawnSecondAsteroid //TODO: take 2 shot to be destroy
+                if(!_isSecondAsteroidRunning)
+                {
+                    StartCoroutine(SpawnAsteroidTwo(delay: 8f));
+                }
 
-                StartCoroutine(SpawnEnemyWithDelay(delay: 6f));
+                if(!_isEnemyEnable)
+                {
+                    SpawnEnemyWithDelay();
+                }
 
                 yield return new WaitForSeconds(_spawnWaitTimeLevelTwo / GameSpeed);
             }
-            else if(_score < _levelThreePoints) // Level 3 < 900pts
+            else if(_score < _levelThreePoints) // Level 3 < 1200pts
             {
                 SpawnAsteroid();
 
                 SpawnShield();
 
-                //SpawnSecondAsteroid //TODO: take 2 shot to be destroy
+                if(!_isSecondAsteroidRunning)
+                {
+                    StartCoroutine(SpawnAsteroidTwo(delay: 8f));
+                }
 
                 SpawnEnemy(numberOfLifes: 5, totalEnemies: 2);
 
@@ -167,7 +184,10 @@ public class GameManager : MonoBehaviour
 
                 SpawnShield();
 
-                //SpawnSecondAsteroid //TODO: take 2 shot to be destroy
+                if(!_isSecondAsteroidRunning)
+                {
+                    StartCoroutine(SpawnAsteroidTwo(delay: 6f));
+                }
 
                 SpawnEnemy(numberOfLifes: 7, totalEnemies: 3);
 
@@ -186,8 +206,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public bool HandleLifes(int lessScore = Constants.RemoveScore)
-    {
+    public bool HandleLifes(string tag = "", int lessScore = Constants.RemoveScore)
+    {   
+        if(tag == "AsteroidTwo")
+        {
+            lessScore = 60;
+        }
+
         _playerHealth--;
 
         UpdateHearts();
@@ -260,6 +285,19 @@ public class GameManager : MonoBehaviour
         Quaternion spawnRotation = Quaternion.identity;
         Instantiate(_hazard, spawnPosition, spawnRotation);
     }
+
+    private IEnumerator SpawnAsteroidTwo( float delay, int numberOfLifes = 2)
+    {   
+        _isSecondAsteroidRunning = true;
+
+        yield return new WaitForSeconds(delay);
+
+        Vector3 spawnPosition = VectorManager.NewVector3(UnityEngine.Random.Range(_spawnXMin, _spawnXMax), 0, _spawmZ + 1);
+        Quaternion spawnRotation = Quaternion.identity;
+        InstanceAsteroidWithLifes(spawnPosition, spawnRotation, numberOfLifes, delay);
+
+        _isSecondAsteroidRunning = false;
+    }
     
     private void SpawnEnemy(int numberOfLifes = 3, int totalEnemies = 1)
     {
@@ -276,19 +314,18 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private IEnumerator SpawnEnemyWithDelay(float delay, int numberOfLifes = 3)
+    private void SpawnEnemyWithDelay(int numberOfLifes = 3)
     {
-        if (!_isEnemyEnable) //First if is to realy apply the delay beetween spawns!
-        {
-            yield return new WaitForSeconds(delay);
+        _isEnemyEnable = true;
 
-            if (!_isEnemyEnable) //Second if is to avoid a duplicated spawn!
-            {
-                Vector3 spawnPosition = VectorManager.NewVector3(0, 0, _spawmZEnemy);
-                InstanceEnemyWithLifes(spawnPosition, numberOfLifes);
-                _isEnemyEnable = true;
-            }
-        }
+        Vector3 spawnPosition = VectorManager.NewVector3(0, 0, _spawmZEnemy);
+        InstanceEnemyWithLifes(spawnPosition, numberOfLifes);
+    }
+
+    public IEnumerator EnemyDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        _isEnemyEnable = false;
     }
 
     private void InstanceEnemyWithLifes(Vector3 spawnPosition, int numberOfLifes)
@@ -296,6 +333,13 @@ public class GameManager : MonoBehaviour
         GameObject enemy = Instantiate(_enemy, spawnPosition, _enemy.transform.rotation);
         EnemyContact enemyContactClass = enemy.GetComponent<EnemyContact>();
         enemyContactClass.EnemyLifes = numberOfLifes;
+    }
+
+    private void InstanceAsteroidWithLifes(Vector3 spawnPosition, Quaternion spawnRotation, int numberOfLifes, float delay)
+    {
+        GameObject asteroidTwo = Instantiate(_hazardTwo, spawnPosition, spawnRotation);
+        DestroyByContact asteroidContactClass = asteroidTwo.GetComponent<DestroyByContact>();
+        asteroidContactClass.Lifes = numberOfLifes;
     }
 
     public void EnemyDestroyed() => _totalActiveEnemies--;

@@ -9,6 +9,8 @@ public class DestroyByContact : MonoBehaviour
     public static int AsteroidSequence => _asteroidSequence;
     private static int _asteroidSequence;
 
+    public int Lifes;
+
     void OnTriggerEnter(Collider other)
     {   
         if(other.tag == "Boundary")
@@ -39,6 +41,8 @@ public class DestroyByContact : MonoBehaviour
         _asteroidSequence++;
         DestroyAsteroidObject();
 
+        Debug.Log(Lifes);
+        
         if(other.tag == "Player")
         {   
             if(PlayerController.IsShieldOn)
@@ -47,7 +51,7 @@ public class DestroyByContact : MonoBehaviour
                 return;
             }
 
-            bool gameOver = GameManager.Instance.HandleLifes();
+            bool gameOver = GameManager.Instance.HandleLifes(tag);
             if(!gameOver)
             {
                 CoroutineManager.Instance.StartCoroutine(PlayerController.Instance.BlinkEffect());
@@ -60,9 +64,17 @@ public class DestroyByContact : MonoBehaviour
             Instantiate(_playerExplosion, other.transform.position, other.transform.rotation);
         }
 
-        if(!GameManager.IsGameOver)
+        if(!GameManager.IsGameOver && Lifes <= 0)
         {
-            GameManager.Instance.AddScore();
+            switch(tag)
+            {
+                case "Asteroid":
+                    GameManager.Instance.AddScore();
+                    break;
+                case "AsteroidTwo":
+                    GameManager.Instance.AddScore(valueToAdd: 30);
+                    break;
+            }
         }
 
         Destroy(other.gameObject); //Destroy shot and player
@@ -70,9 +82,17 @@ public class DestroyByContact : MonoBehaviour
 
     private void DestroyAsteroidObject()
     {
-        AudioManager.Instance.PlaySoundEffect("ExplosionAsteroid");
-        Instantiate(_explosion, _childTransform.position, transform.rotation);
-        Destroy(gameObject);
+        if(Lifes > 0)
+        {
+            Lifes--;
+        }
+
+        if(Lifes <= 0)
+        {
+            AudioManager.Instance.PlaySoundEffect("ExplosionAsteroid");
+            Instantiate(_explosion, _childTransform.position, transform.rotation);
+            Destroy(gameObject);
+        }
     }
 
     public static void ResetAsteroidSequence() => _asteroidSequence = 0;
