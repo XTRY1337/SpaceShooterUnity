@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class DestroyByContact : MonoBehaviour
@@ -5,11 +6,22 @@ public class DestroyByContact : MonoBehaviour
     [SerializeField] private GameObject _explosion;
     [SerializeField] private GameObject _playerExplosion;
     [SerializeField] private Transform _childTransform;
+    [SerializeField] private Renderer _asteroidRenderTwo;
+    [SerializeField] private int _blinkCount;
+    [SerializeField] private float _blinkTime;
 
     public static int AsteroidSequence => _asteroidSequence;
     private static int _asteroidSequence;
 
+    private bool _isBlinking;
+    private float _gameSpeed;
+
     public int Lifes;
+
+    void Start()
+    {
+        _gameSpeed = GameManager.GameSpeed;
+    }
 
     void OnTriggerEnter(Collider other)
     {   
@@ -84,6 +96,12 @@ public class DestroyByContact : MonoBehaviour
     {
         if(Lifes > 0)
         {
+            if(!_isBlinking)
+            {
+                _isBlinking = true;
+                CoroutineManager.Instance.StartCoroutine(BlinkEffectAsteroidTwo());
+            }
+
             Lifes--;
         }
 
@@ -92,6 +110,35 @@ public class DestroyByContact : MonoBehaviour
             AudioManager.Instance.PlaySoundEffect("ExplosionAsteroid");
             Instantiate(_explosion, _childTransform.position, transform.rotation);
             Destroy(gameObject);
+        }
+    }
+
+    private IEnumerator BlinkEffectAsteroidTwo()
+    {
+        Color originalColor = _asteroidRenderTwo.material.GetColor("_Color"); 
+        Color damageColor = new(r: 1, g: 0, b: 0, a: 1);
+
+        for (int i = 0; i < _blinkCount; i++)
+        {   
+            BlinkAction(damageColor);
+            yield return new WaitForSeconds(_blinkTime / _gameSpeed);
+            
+            BlinkAction(originalColor);
+            yield return new WaitForSeconds(_blinkTime / _gameSpeed);   
+        }
+
+        _isBlinking = false;
+    }
+
+    private void BlinkAction(Color color)
+    {   
+        try
+        {
+            _asteroidRenderTwo.material.SetColor("_Color", color);
+        }
+        catch
+        {
+            _isBlinking = false;
         }
     }
 
